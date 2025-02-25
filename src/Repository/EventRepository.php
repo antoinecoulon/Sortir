@@ -17,6 +17,7 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    //todo: remplacer cette requête par une findAll personnalisée comprenant le count
     public function findInscriptionUserCount(): array
     {
         $qb = $this->createQueryBuilder('e');
