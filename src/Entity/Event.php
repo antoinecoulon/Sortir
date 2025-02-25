@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use App\Enum\EventState;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Event
 {
     #[ORM\Id]
@@ -16,12 +20,15 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le nom doit être renseigné')]
     private ?string $name = null;
 
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\Positive(message: 'Le nombre de participants doit être supérieur à 0')]
+    #[Assert\NotBlank(message: 'Le nombre de participants doit être renseigné')]
     private ?int $maxParticipant = null;
 
     #[ORM\Column]
@@ -45,10 +52,12 @@ class Event
 
     #[ORM\ManyToOne(inversedBy: 'events')]
     #[ORM\JoinColumn(nullable :false)]
+    #[Assert\NotNull(message: 'Le site doit être renseigné')]
     private ?Site $site = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Le lieu de l'évenement doit être renseigné")]
     private ?Location $location = null;
 
     /**
@@ -233,7 +242,13 @@ class Event
     public function setState(EventState $state): static
     {
         $this->state = $state;
-
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function prePersist(): void
+    {
+        $this->setIsPublished(true);
+        $this->setState(EventState::CREATED);
     }
 }
