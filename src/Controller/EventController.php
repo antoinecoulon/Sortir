@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Enum\EventState;
 use App\Form\EventType;
+
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,10 +25,21 @@ final class EventController extends AbstractController
         $this->em = $em;
     }
 
-    #[Route('/', name: 'app_event')]
+    #[Route('/', name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
+        $events = $this->eventRepository->findAll();
+
+        $inscriptionsCount = $this->eventRepository->findInscriptionUserCount(); // On récupère un tableau associatif
+        // et on le transforme en tableau indexé par l'ID
+        $inscriptionsCountById = [];
+        foreach ($inscriptionsCount as $count) {
+            $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
+        }
+
         return $this->render('event/index.html.twig', [
+            'events' => $events,
+            'inscriptionCount' => $inscriptionsCountById,
         ]);
     }
 
