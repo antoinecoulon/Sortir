@@ -21,9 +21,18 @@ final class EventController extends AbstractController
     #[Route('/', name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
+        $events = $this->eventRepository->findAll();
+
+        $inscriptionsCount = $this->eventRepository->findInscriptionUserCount(); // On récupère un tableau associatif
+        // et on le transforme en tableau indexé par l'ID
+        $inscriptionsCountById = [];
+        foreach ($inscriptionsCount as $count) {
+            $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
+        }
 
         return $this->render('event/index.html.twig', [
-            'events' => $this->eventRepository->findAll(),
+            'events' => $events,
+            'inscriptionCount' => $inscriptionsCountById,
         ]);
     }
 }
