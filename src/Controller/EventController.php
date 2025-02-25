@@ -30,6 +30,7 @@ final class EventController extends AbstractController
     {
         $events = $this->eventRepository->findAll();
 
+        // Récupère la valeur user.email de l'utilisateur connecté
         $current_user = $this->getUser()->getUserIdentifier();
 
         $inscriptionsCount = $this->eventRepository->findInscriptionUserCount(); // On récupère un tableau associatif
