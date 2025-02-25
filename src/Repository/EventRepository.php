@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Event;
+use Couchbase\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,16 @@ class EventRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
+    }
+
+    public function findInscriptionUserCount(): array
+    {
+        $qb = $this->createQueryBuilder('e');
+        $qb->select('e.id as eventId, COUNT(u.id) as inscriptionCount')
+            ->leftJoin('e.participants', 'u')
+            ->groupBy('e.id');
+
+        return $qb->getQuery()->getArrayResult();
     }
 
 //    /**

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EventState;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
