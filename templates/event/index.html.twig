@@ -4,4 +4,96 @@
 
 {% block body %}
     <div>Page d'accueil</div>
+
+    <div>
+        <h2>Filtrer les sorties</h2>
+        <p>TODO...</p>
+    </div>
+
+    {# Afficher les sorties #}
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Nom de la sortie
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Date de la sortie
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Clôture
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Inscrits / Places
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Etat
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Inscrit ?
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Organisateur
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {{ event.name }}
+                </th>
+                <td class="px-6 py-4">
+                    {{ event.startAt | date("d/m/Y H:i") }}
+                </td>
+                <td class="px-6 py-4">
+                    {{ event.endAt | date("d/m/Y H:i") }}
+                </td>
+                <td class="px-6 py-4">
+                    {{ inscriptionCount[event.id] ?? 0 }} / {{ event.maxParticipant }}
+                </td>
+                <td class="px-6 py-4">
+                    {{ event.state.value }}
+                </td>
+                <td class="px-6 py-4">
+                    <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
+                </td>
+                <td class="px-6 py-4">
+                    {{ event.organizer.name }}
+                </td>
+                <td class="px-6 py-4">
+                    {# todo: route afficher détails event #}
+                    <a href="#">Afficher</a>
+                    {# todo: if current_user.id = event.organizer.id #}
+                    <a href="#">Modifier</a>
+                    {# todo: if current_user.id = event.organizer.id #}
+                    <a href="#">Annuler</a>
+                    {# endif #}
+                    {# todo: if: méthode pour savoir si l'utilisateur est inscrit ou non #}
+                    <a href="#">S'inscrire</a>
+                    <a href="#">Se désister</a>
+                    {# endif #}
+                    {% if event.published == 0 %}
+                        {# todo: route publish() = set isPublish = 1 #}
+                        <a href="#">Publier</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-primary">
+            {# todo: route créer un event #}
+            Créer une sortie
+        </button>
+    </div>
+
+
 {% endblock %}
