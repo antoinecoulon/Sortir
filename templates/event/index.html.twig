@@ -68,11 +68,12 @@
                 <td class="px-6 py-4">
                     {# todo: route afficher détails event #}
                     <a href="#">Afficher</a>
-                    {# todo: if current_user.id = event.organizer.id #}
+                    {% if current_user is same as(event.organizer.email) %}
                     <a href="#">Modifier</a>
-                    {# todo: if current_user.id = event.organizer.id #}
+                    {% endif %}
+                    {% if current_user is same as(event.organizer.email) %}
                     <a href="#">Annuler</a>
-                    {# endif #}
+                    {% endif %}
                     {# todo: if: méthode pour savoir si l'utilisateur est inscrit ou non #}
                     <a href="#">S'inscrire</a>
                     <a href="#">Se désister</a>
