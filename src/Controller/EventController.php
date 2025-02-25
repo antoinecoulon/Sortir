@@ -30,6 +30,8 @@ final class EventController extends AbstractController
     {
         $events = $this->eventRepository->findAll();
 
+        $current_user = $this->getUser()->getUserIdentifier();
+
         $inscriptionsCount = $this->eventRepository->findInscriptionUserCount(); // On récupère un tableau associatif
         // et on le transforme en tableau indexé par l'ID
         $inscriptionsCountById = [];
@@ -40,6 +42,7 @@ final class EventController extends AbstractController
         return $this->render('event/index.html.twig', [
             'events' => $events,
             'inscriptionCount' => $inscriptionsCountById,
+            'current_user' => $current_user,
         ]);
     }
 
