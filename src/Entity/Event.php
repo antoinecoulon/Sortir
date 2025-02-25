@@ -27,8 +27,12 @@ class Event
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Assert\Positive(message: 'Le nombre de participants doit être supérieur à 0')]
     #[Assert\NotBlank(message: 'Le nombre de participants doit être renseigné')]
+    #[Assert\Range(
+        notInRangeMessage: 'Le nombre de participants doit être entre 1 et 100',
+        min: 1,
+        max: 100
+    )]
     private ?int $maxParticipant = null;
 
     #[ORM\Column]
@@ -38,12 +42,18 @@ class Event
     private ?string $photo = null;
 
     #[ORM\Column]
+    #[Assert\GreaterThan('+1 hours', message: 'La date de début doit être supérieur à aujourd\'hui')]
+    #[Assert\Type(type: \DateTimeImmutable::class, message: 'La date de début doit être renseigné')]
     private ?\DateTimeImmutable $startAt = null;
 
     #[ORM\Column]
+    #[Assert\GreaterThan(propertyPath: 'startAt', message: 'La date de fin doit être supérieur à la date de début')]
+    #[Assert\Type(type: \DateTimeImmutable::class, message: 'La date de fin doit être renseigné')]
     private ?\DateTimeImmutable $endAt = null;
 
     #[ORM\Column]
+    #[Assert\LessThan(propertyPath: 'startAt', message: 'La date de fin d\'inscription doit être inférieur à la date de début')]
+    #[Assert\Type(type: \DateTimeImmutable::class, message: 'La date de fin d\'inscription doit être renseigné')]
     private ?\DateTimeImmutable $inscriptionLimitAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
@@ -51,7 +61,7 @@ class Event
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
-    #[ORM\JoinColumn(nullable :false)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: 'Le site doit être renseigné')]
     private ?Site $site = null;
 
@@ -234,6 +244,7 @@ class Event
 
         return $this;
     }
+
     public function getState(): ?EventState
     {
         return $this->state;
