@@ -63,7 +63,7 @@
                     <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.organizer.name }}
+                    {{ event.organizer ? event.organizer.name : 'Inconnu' }}
                 </td>
                 <td class="px-6 py-4">
                     {# todo: route afficher détails event #}

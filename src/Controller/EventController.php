@@ -50,10 +50,11 @@ final class EventController extends AbstractController
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
-
         if($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($event);
             $this->em->flush();
+            $this->addFlash('success', "l'event {$event->getName()} a bien été créée");
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
         }
 
         return $this->render('event/create.html.twig', [
