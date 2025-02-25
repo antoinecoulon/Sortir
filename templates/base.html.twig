@@ -14,10 +14,14 @@
     {% endblock %}
 </head>
 <body class="h-screen w-screen flex flex-col">
+
 {% include "header.html.twig" %}
-<div class="grow flex flex-col p-16">
+
+<div class="grow flex flex-col p-8">
     {% block body %}{% endblock %}
 </div>
+
 {% include "footer.html.twig" %}
+
 </body>
 </html>
