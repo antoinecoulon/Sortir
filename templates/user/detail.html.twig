@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <h1 class="mb-3 text-center text-lg text-5xl">{{ title }}</h1>
+        <p class="mb-3 text-center text-lg md:text-4xl">{{ user.pseudo }}</p>
+        <p class="mb-3 text-center text-lg md:text-4xl">  Nom : {{ user.name }}</p>
+        <p class="mb-3 text-center text-lg md:text-4xl"> Prénom : {{ user.firstname }}</p>
+        <p class="mb-3 text-center text-lg md:text-4xl"> Téléphone : {{ user.phone }}</p>
+        <p class="mb-3 text-center text-lg md:text-4xl"> Email : {{ user.email }}</p>
+        <p class="mb-3 text-center text-lg md:text-4xl"> Ville de rattachement : {{ user.site.name }}</p>
+
+        {% if app.user == user %}
+            <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                <a href="{{ path('app_user_update', {'userId' : user.id}) }}">Update</a>
+            </button>
+
+        {% endif %}
+
+    </div>
+
+{% endblock %}
+
+{% block title %}{{ parent() }} - {{ title }}
+
+{% endblock %}

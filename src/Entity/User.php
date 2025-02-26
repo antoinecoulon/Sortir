@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Unique;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -26,9 +27,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 20)]
     #[Unique]
+    #[Assert\NotBlank(message: 'Le pseudo doit être renseigné')]
+    #[Assert\Length(min: 3, max: 50,
+        normalizer: 'trim',
+        minMessage: 'Trop court ! Au moins {{ limit }} caractères.',
+        maxMessage: 'Trop long ! Maximum {{ limit }} caractères')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z09_-]+$/i',
+        message: 'Veuillez n\'utiliser que des lettres, des chiffres, des underscores et des tirets'
+    )]
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'L\'email doit être renseigné')]
+    #[Assert\Email(
+        message: 'Veuillez rentrer un email valide',
+        normalizer: 'trim')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9._%+-]+@campus-eni\.fr$/',
+        message: "Veuillez renseigner une adresse email de type @campus-eni@.fr"
+    )]
     private ?string $email = null;
 
     /**
@@ -41,15 +59,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'Le mot de passe ne peut pas être vide')]
     private ?string $password = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(
+        message: 'Le nom ne peut pas être vide',
+        normalizer: 'trim')]
     private ?string $name = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(
+        message: 'Le prénom ne peut pas être vide',
+        normalizer: 'trim')]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 10, nullable: true)]
+    #[ORM\Column(length: 10)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone doit être renseigné')]
+    #[Assert\Length(min: 10, max: 10,
+        normalizer: 'trim',
+        minMessage: 'Trop court ! Au moins {{ limit }} caractères.',
+        maxMessage: 'Trop long ! Maximum {{ limit }} caractères.')]
     private ?string $phone = null;
 
     #[ORM\Column(length: 50, nullable: true)]
