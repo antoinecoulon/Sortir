@@ -40,10 +40,11 @@ class Event
     private ?\DateTimeImmutable $inscriptionLimitAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable :false)]
     private ?Site $site = null;
 
     #[ORM\ManyToOne]
@@ -55,6 +56,9 @@ class Event
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $participants;
+
+    #[ORM\Column(type: 'event_state')]
+    private ?EventState $state = null;
 
     public function __construct()
     {
@@ -218,6 +222,17 @@ class Event
     public function removeParticipant(User $participant): static
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+    public function getState(): ?EventState
+    {
+        return $this->state;
+    }
+
+    public function setState(EventState $state): static
+    {
+        $this->state = $state;
 
         return $this;
     }
