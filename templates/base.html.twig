@@ -13,11 +13,11 @@
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </head>
-<body class="h-screen w-screen flex flex-col">
+<body class="flex flex-col h-screen dark:bg-gray-800 ">
 
 {% include "header.html.twig" %}
 
-<div class="grow flex flex-col p-8">
+<div class="grow p-8 overflow-auto">
     {% block body %}{% endblock %}
 </div>
 
