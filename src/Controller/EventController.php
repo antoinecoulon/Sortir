@@ -28,13 +28,6 @@ final class EventController extends AbstractController
     #[Route(['/', '/events'], name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
-        // Récupère la liste des events avec le nombre d'inscriptions pour chaque
-        $events = $this->eventRepository->findAllEventsWithInscriptionCount();
-        // On récupère un tableau associatif qu'on transforme en tableau indexé par l'ID pour faciliter la récupération du compte d'inscrits
-        $inscriptionsCountById = [];
-        foreach ($events as $count) {
-            $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
-        }
 
         // On teste si un utilisateur est connecté
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -43,6 +36,17 @@ final class EventController extends AbstractController
         } else {
             // L'utilisateur n'est pas connecté, définir une valeur par défaut
             $current_user = 'Utilisateur non connecté';
+            // et le rediriger vers app_login avec un message clair
+            // $this->addFlash('error', 'Vous avez tenté d'accéder à une page à laquelle vous n'avez pas accès. Veuillez vous identifier.');
+            // return $this->redirectToRoute('app_login');
+        }
+
+        // Récupère la liste des events avec le nombre d'inscriptions pour chaque
+        $events = $this->eventRepository->findAllEventsWithInscriptionCount();
+        // On récupère un tableau associatif qu'on transforme en tableau indexé par l'ID pour faciliter la récupération du compte d'inscrits
+        $inscriptionsCountById = [];
+        foreach ($events as $count) {
+            $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
         }
 
         return $this->render('event/index.html.twig', [
