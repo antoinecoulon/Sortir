@@ -70,14 +70,9 @@
                     {% if current_user is same as(event.organizerEmail) %}
                     <a href="#">Modifier</a>
                     {% endif %}
-                    {% if current_user is same as(event.organizerEmail) %}
+                    {% if current_user is same as(event.organizerEmail) or is_granted('ROLE_ADMIN') %}
                     <a href="#">Annuler</a>
                     {% endif %}
-                    {# S'inscrire et se désinscrire sur la page de détails plutot #}
-                    {# <a href="#">S'inscrire</a> #}
-                    {# <a href="#">Se désister</a> #}
-                    {# 'Publier' sur la page de modif plutot #}
-                    {# <a href="#">Publier</a> #}
                 </td>
             </tr>
             {% endfor %}
