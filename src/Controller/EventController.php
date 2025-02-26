@@ -30,8 +30,15 @@ final class EventController extends AbstractController
     {
         $events = $this->eventRepository->findAll();
 
-        // Récupère la valeur user.email de l'utilisateur connecté
-        $current_user = $this->getUser()->getUserIdentifier();
+        // On teste si un utilisateur est connecté
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // Récupère la valeur user.email de l'utilisateur connecté
+            $current_user = $this->getUser()->getUserIdentifier();
+        } else {
+            // L'utilisateur n'est pas connecté, définir une valeur par défaut
+            $current_user = 'Utilisateur non connecté';
+        }
+
 
         $inscriptionsCount = $this->eventRepository->findInscriptionUserCount(); // On récupère un tableau associatif
         // et on le transforme en tableau indexé par l'ID
