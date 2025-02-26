@@ -17,14 +17,16 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    //todo: remplacer cette requête par une findAll personnalisée comprenant le count
-    public function findInscriptionUserCount(): array
+    public function findAllEventsWithInscriptionCount(): array
     {
         $qb = $this->createQueryBuilder('e');
-        $qb->select('e.id as eventId, COUNT(u.id) as inscriptionCount')
-            ->leftJoin('e.participants', 'u')
-            ->groupBy('e.id');
-
+        $qb->select('e.id as eventId, e.name, e.description, e.maxParticipant, 
+                            e.startAt, e.endAt, e.state, 
+                            organizer.id as organizerId, organizer.name as organizerName, organizer.email as organizerEmail, 
+                            COUNT(participant.id) as inscriptionCount')
+            ->leftJoin('e.participants', 'participant')
+            ->leftJoin('e.organizer', 'organizer')
+            ->groupBy('e.id', 'e.name', 'e.description', 'e.maxParticipant', 'e.startAt', 'e.endAt', 'e.state', 'organizer.id');
         return $qb->getQuery()->getArrayResult();
     }
 
