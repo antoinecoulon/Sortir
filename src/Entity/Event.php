@@ -259,7 +259,6 @@ class Event
     #[ORM\PrePersist]
     public function prePersist(): void
     {
-        $this->setIsPublished(true);
         $this->setState(EventState::CREATED);
     }
 }

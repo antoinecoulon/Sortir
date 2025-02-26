@@ -9,6 +9,7 @@ use App\Entity\User;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -28,7 +29,8 @@ class EventType extends AbstractType
                 'label' => 'Nom'
             ])
             ->add('description', TextAreaType::class, [
-                'label' => 'Description'
+                'label' => 'Description',
+                'required' => false
             ])
             ->add('maxParticipant', IntegerType::class, [
                 'label' => 'Maximum de participants',
@@ -63,12 +65,20 @@ class EventType extends AbstractType
                 'class' => Location::class,
                 'choice_label' => 'name',
             ]);
+
+        if($options['display_isPublish']) {
+            $builder->add('isPublished', CheckboxType::class, [
+                'label' => 'Publié ?',
+                'required' => false
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Event::class,
+            'display_isPublish' => true
         ]);
     }
 }
