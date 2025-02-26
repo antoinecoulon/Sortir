@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Site;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -9,9 +10,19 @@ class SiteFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        $site = [
+            'Saint-Herblain',
+            'Quimper',
+            'La Roche sur Yon',
+            'Niort',
+        ];
 
+        foreach ($site as $index => $siteName) {
+            $site = new Site();
+            $site->setName($siteName);
+
+            $manager->persist($site);
+        }
         $manager->flush();
     }
 }
