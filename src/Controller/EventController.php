@@ -25,7 +25,7 @@ final class EventController extends AbstractController
         $this->em = $em;
     }
 
-    #[Route('/', name: 'app_event', methods: ['GET'])]
+    #[Route(['/', '/events'], name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
         $events = $this->eventRepository->findAll();
