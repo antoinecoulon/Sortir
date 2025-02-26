@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EventController!{% endblock %}
+{% block title %}{{ parent() }} | Liste des évênements{% endblock %}
 
 {% block body %}
     <div>Page d'accueil</div>
@@ -54,7 +54,7 @@
                     {{ event.endAt | date("d/m/Y H:i") }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ inscriptionCount[event.id] ?? 0 }} / {{ event.maxParticipant }}
+                    {{ inscriptionCount[event.eventId] ?? 0 }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
                     {{ event.state.value }}
@@ -63,23 +63,15 @@
                     <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.organizer.name }}
+                    {{ event.organizerName }}
                 </td>
                 <td class="px-6 py-4">
-                    {# todo: route afficher détails event #}
-                    <a href="#">Afficher</a>
-                    {# todo: if current_user.id = event.organizer.id #}
+                    <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
+                    {% if current_user is same as(event.organizerEmail) %}
                     <a href="#">Modifier</a>
-                    {# todo: if current_user.id = event.organizer.id #}
+                    {% endif %}
+                    {% if current_user is same as(event.organizerEmail) or is_granted('ROLE_ADMIN') %}
                     <a href="#">Annuler</a>
-                    {# endif #}
-                    {# todo: if: méthode pour savoir si l'utilisateur est inscrit ou non #}
-                    <a href="#">S'inscrire</a>
-                    <a href="#">Se désister</a>
-                    {# endif #}
-                    {% if event.published == 0 %}
-                        {# todo: route publish() = set isPublish = 1 #}
-                        <a href="#">Publier</a>
                     {% endif %}
                 </td>
             </tr>
@@ -89,10 +81,9 @@
     </div>
 
     <div>
-        <button type="button" class="btn btn-primary">
-            {# todo: route créer un event #}
-            Créer une sortie
-        </button>
+        <a href="{{ path('app_event_create') }}">
+            <button type="button" class="btn btn-primary">Créer une sortie</button>
+        </a>
     </div>
 
 

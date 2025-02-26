@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use Couchbase\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,13 +16,21 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function findInscriptionUserCount(): array
+    /**
+     * Méthode: récupère la liste des events avec le compte des inscriptions pour chaque event
+     * @note attention aux alias (ex: eventId, organizerName, etc)
+     * @return array
+     */
+    public function findAllEventsWithInscriptionCount(): array
     {
         $qb = $this->createQueryBuilder('e');
-        $qb->select('e.id as eventId, COUNT(u.id) as inscriptionCount')
-            ->leftJoin('e.participants', 'u')
-            ->groupBy('e.id');
-
+        $qb->select('e.id as eventId, e.name, e.description, e.maxParticipant, 
+                            e.startAt, e.endAt, e.state, 
+                            organizer.id as organizerId, organizer.name as organizerName, organizer.email as organizerEmail, 
+                            COUNT(participant.id) as inscriptionCount')
+            ->leftJoin('e.participants', 'participant')
+            ->leftJoin('e.organizer', 'organizer')
+            ->groupBy('e.id', 'e.name', 'e.description', 'e.maxParticipant', 'e.startAt', 'e.endAt', 'e.state', 'organizer.id');
         return $qb->getQuery()->getArrayResult();
     }
 
