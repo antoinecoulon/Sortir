@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Site;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -35,8 +36,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $user->setPhoto($faker->image());
            $user->setIsActive($faker->boolean());
 
+           $site = $this->getReference('site_' . rand(0, 3), Site::class);
 
-           $site = $this->getReference('site_' . rand(0, 3), SiteFixtures::class);
            $user->setSite($site);
 
            $manager->persist($user);

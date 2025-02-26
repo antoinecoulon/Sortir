@@ -18,6 +18,7 @@ class SiteFixtures extends Fixture
         ];
 
         foreach ($sites as $index=>$siteName) {
+            
             $site = new Site();
             $site->setName($siteName);
 
