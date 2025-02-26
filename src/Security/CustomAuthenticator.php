@@ -13,6 +13,8 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -36,12 +38,21 @@ class CustomAuthenticator extends AbstractAuthenticator
      * Called on every request to decide if this authenticator should be
      * used for the request. Returning `false` will cause this authenticator
      * to be skipped.
+     * @param Request $request
+     * @return bool
      */
     public function supports(Request $request): ?bool
     {
         return $request->isMethod('POST') && $request->request->has('email_or_pseudo');
     }
 
+    /**
+     * When user log in, get the inputs if exists, then use user repository to check in database if one input is an
+     * existing pseudo or email and the other input is a password to grant an access and verify csrf token to remember
+     * user during  one week
+     * @param Request $request
+     * @return Passport
+     */
     public function authenticate(Request $request): Passport
     {
         $emailOrPseudo = $request->request->get('email_or_pseudo');
@@ -53,23 +64,39 @@ class CustomAuthenticator extends AbstractAuthenticator
 
         return new Passport(
            new UserBadge($emailOrPseudo, function ($userIdentifier) {
-               $user = $this->userRepository->findByEmailOrPseudo($userIdentifier);
+               $user = $this->userRepository->loadUserByIdentifier($userIdentifier);
                if (!$user) {
                    throw new UserNotFoundException('Utilisateur non trouvé');
                }
                return $user;
            }),
             new PasswordCredentials($password),
+            [
+                new CsrfTokenBadge('authenticate', $request->get('_csrf_token')),
+                new RememberMeBadge()
+            ]
 
        );
     }
 
+    /**
+     *
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $firewallName
+     * @return Response|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         // on success, let the request continue
         return new RedirectResponse($this->urlGenerator->generate('app_event'));
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return Response|null
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $request->getSession()->getFlashBag()->add('error', 'Identifiants incorrects.');

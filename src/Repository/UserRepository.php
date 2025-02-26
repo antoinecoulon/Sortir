@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -35,15 +35,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function findByEmailOrPseudo(string $identifier): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->where('u.email = :identifier')
-            ->orWhere('u.pseudo = :identifier')
-            ->setParameter('identifier', $identifier)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
 
     //    /**
     //     * @return User[] Returns an array of User objects
@@ -69,5 +60,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     //            ->getOneOrNullResult()
     //        ;
     //    }
-
+    /**
+     * Search a user by pseudo or email in database to log in
+     * @param string $identifier
+     * @return User|null
+     */
+    public function loadUserByIdentifier(string $identifier): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.email = :identifier')
+            ->orWhere('u.pseudo = :identifier')
+            ->setParameter('identifier', $identifier)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
