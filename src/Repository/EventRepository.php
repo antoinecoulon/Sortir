@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use Couchbase\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,6 +18,7 @@ class EventRepository extends ServiceEntityRepository
 
     /**
      * Méthode: récupère la liste des events avec le compte des inscriptions pour chaque event
+     * @note attention aux alias (ex: eventId, organizerName, etc)
      * @return array
      */
     public function findAllEventsWithInscriptionCount(): array
