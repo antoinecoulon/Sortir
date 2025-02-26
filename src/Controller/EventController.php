@@ -39,7 +39,6 @@ final class EventController extends AbstractController
             $current_user = 'Utilisateur non connecté';
         }
 
-
         $inscriptionsCount = $this->eventRepository->findInscriptionUserCount(); // On récupère un tableau associatif
         // et on le transforme en tableau indexé par l'ID
         $inscriptionsCountById = [];
