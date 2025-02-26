@@ -10,19 +10,22 @@ class SiteFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $site = [
+        $sites = [
             'Saint-Herblain',
             'Quimper',
             'La Roche sur Yon',
             'Niort',
         ];
 
-        foreach ($site as $index => $siteName) {
+        foreach ($sites as $index=>$siteName) {
             $site = new Site();
             $site->setName($siteName);
 
             $manager->persist($site);
+
+            $this->addReference('site_'.$index, $site);
         }
         $manager->flush();
     }
+
 }
