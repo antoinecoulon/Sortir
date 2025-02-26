@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container h-full max-w-lg mx-auto flex flex-col">
+        <h1 class="text-center dark:text-white">{{ isPublished ? 'Evènement publié' : 'Evènement non publié'  }}</h1>
+        {{ form_start(form) }}
+        <div>
+            {{ form_row(form.name) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.maxParticipant) }}
+            {{ form_row(form.startAt) }}
+            {{ form_row(form.endAt) }}
+            {{ form_row(form.inscriptionLimitAt) }}
+            {{ form_row(form.site) }}
+            {{ form_row(form.location) }}
+        </div>
+
+        <div class="flex flex-row justify-center items-center gap-5 ">
+            {% if not isPublished  %}
+            <a href="{{ path('app_event_publish', {'id' : id} )}}">
+            <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                Publier l'évènement
+            </button>
+            </a>
+            {% endif %}
+            <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                Enregistrer les modifications
+            </button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

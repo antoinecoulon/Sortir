@@ -12,8 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted("ROLE_USER")]
 final class EventController extends AbstractController
 {
     private readonly EventRepository $eventRepository;
@@ -57,16 +59,17 @@ final class EventController extends AbstractController
     }
 
     #[Route('/event/create', name: 'app_event_create')]
-    // #[IsGranted("ROLE_USER")]
     public function create(Request $request): Response
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
-
         if($form->isSubmitted() && $form->isValid()) {
+            $event->setOrganizer($this->getUser());
             $this->em->persist($event);
             $this->em->flush();
+            $this->addFlash('success', "La sortie {$event->getName()} a bien été créée");
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
         }
 
         return $this->render('event/create.html.twig', [
@@ -81,15 +84,43 @@ final class EventController extends AbstractController
     }
 
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
-    public function update(Event $event): Response
+
+    public function update(Event $event, Request $request): Response
     {
-        return $this->render('event/detail.html.twig');
+        $form = $this->createForm(EventType::class, $event, ['display_isPublish' => false]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($event);
+            $this->em->flush();
+            $this->addFlash('success', "La sortie {$event->getName()} a bien été modifié");
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
+        return $this->render('event/update.html.twig', [
+            'form' => $form,
+            'isPublished' => $event->isPublished(),
+            'id' => $event->getId()
+        ]);
     }
 
     #[Route('/event/delete/{id}', name: 'app_event_delete', requirements: ['id' => '\d+'])]
     public function delete(Event $event): Response
     {
-        $this->addFlash('success', "l'event a bien été supprimé");
+        $this->addFlash('success', "La sortie a bien été supprimé");
         return $this->redirectToRoute('app_event');
+    }
+
+    #[Route('/event/publish/{id}', name: 'app_event_publish', requirements: ['id' => '\d+'])]
+    public function publish(Event $event): Response
+    {
+        if($event->isPublished() || !$event->getOrganizer() || $event->getOrganizer()->getId() !== $this->getUser()->getId()) {
+            return throw new AccessDeniedException("Action interdite");
+        }
+        $event->setIsPublished(true);
+        $event->setState(EventState::OPENED);
+        $this->em->persist($event);
+        $this->em->flush();
+        $this->addFlash('success', "La sortie a bien été publié");
+        return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
     }
 }
