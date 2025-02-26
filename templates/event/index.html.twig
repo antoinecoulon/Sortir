@@ -67,21 +67,18 @@
                 </td>
                 <td class="px-6 py-4">
                     {# todo: route afficher détails event #}
-                    <a href="#">Afficher</a>
+                    <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
                     {% if current_user is same as(event.organizer.email) %}
                     <a href="#">Modifier</a>
                     {% endif %}
                     {% if current_user is same as(event.organizer.email) %}
                     <a href="#">Annuler</a>
                     {% endif %}
-                    {# todo: if: méthode pour savoir si l'utilisateur est inscrit ou non #}
-                    <a href="#">S'inscrire</a>
-                    <a href="#">Se désister</a>
-                    {# endif #}
-                    {% if event.published == 0 %}
-                        {# todo: route publish() = set isPublish = 1 #}
-                        <a href="#">Publier</a>
-                    {% endif %}
+                    {# S'inscrire et se désinscrire sur la page de détails plutot #}
+                    {# <a href="#">S'inscrire</a> #}
+                    {# <a href="#">Se désister</a> #}
+                    {# 'Publier' sur la page de modif plutot #}
+                    {# <a href="#">Publier</a> #}
                 </td>
             </tr>
             {% endfor %}
