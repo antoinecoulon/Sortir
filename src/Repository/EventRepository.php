@@ -17,6 +17,10 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    /**
+     * Méthode: récupère la liste des events avec le compte des inscriptions pour chaque event
+     * @return array
+     */
     public function findAllEventsWithInscriptionCount(): array
     {
         $qb = $this->createQueryBuilder('e');
