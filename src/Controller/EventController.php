@@ -80,7 +80,9 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
-        return $this->render('event/detail.html.twig');
+        return $this->render('event/detail.html.twig', [
+            'event' => $event,
+    ]);
     }
 
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
