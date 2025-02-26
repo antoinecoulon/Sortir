@@ -54,7 +54,7 @@
                     {{ event.endAt | date("d/m/Y H:i") }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ inscriptionCount[event.id] ?? 0 }} / {{ event.maxParticipant }}
+                    {{ inscriptionCount[event.eventId] ?? 0 }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
                     {{ event.state.value }}
@@ -63,15 +63,14 @@
                     <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.organizer.name }}
+                    {{ event.organizerName }}
                 </td>
                 <td class="px-6 py-4">
-                    {# todo: route afficher détails event #}
-                    <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
-                    {% if current_user is same as(event.organizer.email) %}
+                    <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
+                    {% if current_user is same as(event.organizerEmail) %}
                     <a href="#">Modifier</a>
                     {% endif %}
-                    {% if current_user is same as(event.organizer.email) %}
+                    {% if current_user is same as(event.organizerEmail) %}
                     <a href="#">Annuler</a>
                     {% endif %}
                     {# S'inscrire et se désinscrire sur la page de détails plutot #}
