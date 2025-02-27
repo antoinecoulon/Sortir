@@ -34,15 +34,12 @@ class EventRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    public function findInscriptionCountByEventId(int $eventId): int
-    {
-        $connect = $this->getEntityManager()->getConnection();
-
-        $sql = '
-            SELECT COUNT(eu.user_id)
-            FROM event_user eu
-            '
-    }
+//    public function findInscriptionCountByEventId(int $eventId): int
+//    {
+//        $connect = $this->getEntityManager()->getConnection();
+//
+//        $sql = '';
+//    }
 
 //    /**
 //     * @return Event[] Returns an array of Event objects
