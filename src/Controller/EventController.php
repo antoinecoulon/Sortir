@@ -81,6 +81,10 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
+
+        $inscriptionCount = $this->eventRepository->findInscriptionCountByEventId($event->getId());
+        dd($inscriptionCount);
+
         return $this->render('event/detail.html.twig', [
             'event' => $event,
     ]);
