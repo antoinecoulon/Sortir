@@ -36,6 +36,7 @@ final class EventController extends AbstractController
             // Récupère la valeur user.email de l'utilisateur connecté
             $current_user = $this->getUser()->getUserIdentifier();
         } else {
+            // NOTE 27/02: théoriquement maintenant l'utilisateur sera toujours connecté avant d'arriver sur cette page !
             // L'utilisateur n'est pas connecté, définir une valeur par défaut
             $current_user = 'Utilisateur non connecté';
             // et le rediriger vers app_login avec un message clair
