@@ -26,14 +26,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
-    #[Unique]
     #[Assert\NotBlank(message: 'Le pseudo doit être renseigné')]
-    #[Assert\Length(min: 3, max: 50,
+    #[Assert\Length(min: 3, max: 20,
         normalizer: 'trim',
         minMessage: 'Trop court ! Au moins {{ limit }} caractères.',
         maxMessage: 'Trop long ! Maximum {{ limit }} caractères')]
     #[Assert\Regex(
-        pattern: '/^[a-zA-Z09_-]+$/i',
+        pattern: '/^[a-zA-Z0-9_-]+$/i',
         message: 'Veuillez n\'utiliser que des lettres, des chiffres, des underscores et des tirets'
     )]
     private ?string $pseudo = null;

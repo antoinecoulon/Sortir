@@ -5,14 +5,17 @@ namespace App\Form;
 
 use App\Entity\Site;
 use App\Entity\User;
+use App\Repository\SiteRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Optional;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 class UserType extends AbstractType
@@ -20,25 +23,30 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('pseudo', TextType::class,[
-                'label' => 'Pseudo',
+            ->add('pseudo', TextType::class, [
+                'label' => 'Pseudo'
             ])
-            ->add('email',)
+            ->add('email', EmailType::class, [
+                'label' => 'Email'
+            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,
+                'required' => false,
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'first_options' => [
                     'label' => 'Mot de Passe',
                     'constraints' => [
-                        new NotBlank([
-                            'message' => 'Le mot de passe ne peut pas être vide',
-                        ]),
-                        new PasswordStrength([
-                            'message' => 'Entrez un mot de passe plus sécurisé',
-                            'minScore' => PasswordStrength::STRENGTH_WEAK
+                        new Optional([
+                            new NotBlank([
+                                'message' => 'Le mot de passe ne peut pas être vide',
+                            ]),
+                            new PasswordStrength([
+                                'message' => 'Entrez un mot de passe plus sécurisé',
+                                'minScore' => PasswordStrength::STRENGTH_WEAK
+                            ])
                         ])
                     ],
                 ],
@@ -60,7 +68,7 @@ class UserType extends AbstractType
 
             ->add('site', EntityType::class, [
                 'class' => Site::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
             ])
         ;
     }
