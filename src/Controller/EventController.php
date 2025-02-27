@@ -36,6 +36,7 @@ final class EventController extends AbstractController
             // Récupère la valeur user.email de l'utilisateur connecté
             $current_user = $this->getUser()->getUserIdentifier();
         } else {
+            // NOTE 27/02: théoriquement maintenant l'utilisateur sera toujours connecté avant d'arriver sur cette page !
             // L'utilisateur n'est pas connecté, définir une valeur par défaut
             $current_user = 'Utilisateur non connecté';
             // et le rediriger vers app_login avec un message clair
@@ -80,7 +81,13 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
-        return $this->render('event/detail.html.twig');
+
+        $inscriptionCount = $this->eventRepository->findInscriptionCountByEventId($event->getId());
+        dd($inscriptionCount);
+
+        return $this->render('event/detail.html.twig', [
+            'event' => $event,
+    ]);
     }
 
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
