@@ -55,9 +55,9 @@ class Event
     #[Assert\Type(type: \DateTimeImmutable::class, message: 'La date de fin d\'inscription doit être renseigné')]
     private ?\DateTimeImmutable $inscriptionLimitAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'events')]
-    #[ORM\JoinColumn(referencedColumnName: 'id')]
-    private ?User $user = null;
+    #[ORM\ManyToOne(inversedBy: 'userEvents')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
@@ -185,14 +185,14 @@ class Event
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getOrganizer(): ?User
     {
-        return $this->user;
+        return $this->organizer;
     }
 
-    public function setUser(?User $user): static
+    public function setOrganizer(?User $organizer): static
     {
-        $this->user = $user;
+        $this->organizer = $organizer;
 
         return $this;
     }
@@ -243,13 +243,6 @@ class Event
         $this->participants->removeElement($participant);
 
         return $this;
-    }
-
-
-    #[ORM\PrePersist]
-    public function prePersist(): void
-    {
-
     }
 
     public function getState(): ?State

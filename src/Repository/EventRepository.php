@@ -29,7 +29,7 @@ class EventRepository extends ServiceEntityRepository
                             organizer.id as organizerId, organizer.name as organizerName, organizer.email as organizerEmail, 
                             COUNT(participant.id) as inscriptionCount')
             ->leftJoin('e.participants', 'participant')
-            ->leftJoin('e.user', 'organizer')
+            ->leftJoin('e.organizer', 'organizer')
             ->leftJoin('e.state', 's')
             ->groupBy('e.id', 'e.name', 'e.description', 'e.maxParticipant', 'state', 'e.startAt', 'e.endAt', 'organizer.id');
         return $qb->getQuery()->getArrayResult();

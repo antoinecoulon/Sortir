@@ -70,11 +70,11 @@ class CustomAuthenticator extends AbstractAuthenticator
                }
                return $user;
            }),
-            new PasswordCredentials($password)
-//            [
-//                new CsrfTokenBadge('authenticate', $request->get('_csrf_token')),
-//                new RememberMeBadge()
-//            ]
+            new PasswordCredentials($password),
+            [
+                new CsrfTokenBadge('authenticate', $request->get('_csrf_token')),
+                new RememberMeBadge()
+            ]
 
        );
     }

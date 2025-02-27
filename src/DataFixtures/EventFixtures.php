@@ -58,7 +58,7 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
 
             // Dépendance User
             $user = $this->getReference('user_'. rand(0, 9), User::class);
-            $event->setUser($user);
+            $event->setOrganizer($user);
 
             $manager->persist($event);
         }

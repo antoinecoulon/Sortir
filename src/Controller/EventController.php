@@ -7,6 +7,7 @@ use App\Entity\State;
 use App\Form\EventType;
 
 use App\Repository\EventRepository;
+use App\Repository\StateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,7 +67,16 @@ final class EventController extends AbstractController
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $event->setUser($this->getUser());
+            $stateRepo = $this->em->getRepository(State::class);
+            if($event->isPublished()) {
+                $stateCreated = $stateRepo->findOneBy(['name' => 'CREATED']);
+                $event->setState($stateCreated);
+            } else {
+                $stateOpened = $stateRepo->findOneBy(['name' => 'OPENED']);
+                $event->setState($stateOpened);
+            }
+
+            $event->setOrganizer($this->getUser());
             $this->em->persist($event);
             $this->em->flush();
             $this->addFlash('success', "La sortie {$event->getName()} a bien été créée");
@@ -119,7 +129,7 @@ final class EventController extends AbstractController
     #[Route('/event/publish/{id}', name: 'app_event_publish', requirements: ['id' => '\d+'])]
     public function publish(Event $event): Response
     {
-        if ($event->isPublished() || !$event->getUser() || $event->getUser()->getId() !== $this->getUser()->getId()) {
+        if ($event->isPublished() || !$event->getOrganizer() || $event->getOrganizer()->getId() !== $this->getUser()->getId()) {
             return throw new AccessDeniedException("Action interdite");
         }
         $event->setIsPublished(true);
