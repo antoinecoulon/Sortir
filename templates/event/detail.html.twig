@@ -37,7 +37,7 @@
                 <p class="mb-3 font-normal">Site de {{ event.site.name }}</p>
                 <p class="mb-3 font-normal">Lat. : {{ event.location.latitude }} - Long. : {{ event.location.longitude }}</p>
             </div>
-            <div id="map" class="h-[360px]"></div>
+            <div id="map" class="h-[360px] border border-gray-700"></div>
         </div>
 
         <div class="row-span-1 col-span-1" id="participants">
@@ -69,6 +69,7 @@
 
                                 <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <img class="w-10 h-10 rounded-full" src="" alt="profile image">
+                                    {# todo: path image utilisateur #}
                                     <div class="ps-3">
                                         <div class="text-base font-semibold">{{ participant.name }}</div>
                                         <div class="font-normal text-gray-500">{{ participant.email }}</div>
