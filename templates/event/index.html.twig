@@ -57,14 +57,14 @@
                     {{ inscriptionCount[event.eventId] ?? 0 }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.state.value }}
+                    {{ event.state }}
                 </td>
                 <td class="px-6 py-4">
                     <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
                 </td>
                 <td class="px-6 py-4">
                     {{event.organizerName ? event.organizerName : 'Inconnu' }}
-                </td>
+                </td>f
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
                     {% if current_user is same as(event.organizerEmail) %}

@@ -27,9 +27,9 @@ class LocationFixtures extends Fixture
             $location->setLatitude($faker->latitude());
 
             $manager->persist($location);
-
-            $this->setReference('location_', $location);
+            $this->setReference('location_'.$i, $location);
         }
         $manager->flush();
+
     }
 }

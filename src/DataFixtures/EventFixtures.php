@@ -5,8 +5,8 @@ namespace App\DataFixtures;
 use App\Entity\Event;
 use App\Entity\Location;
 use App\Entity\Site;
+use App\Entity\State;
 use App\Entity\User;
-use App\Enum\EventState;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -25,16 +25,16 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
             $event->setDescription($faker->text());
             $event->setMaxParticipant($faker->numberBetween(0, 100));
             $event->setIsPublished($faker->boolean());
-            $event->setPhoto($faker->image());
+            $event->setPhoto($faker->imageUrl());
             if ($event->isPublished()){
                 $eventCancelled = $faker->boolean();
                 if ($eventCancelled){
-                    $event->setState(EventState::CANCELLED);
+                    $event->setState($this->getReference('state_CANCELLED', State::class));
                 } else {
-                    $event->setState(EventState::OPENED);
+                    $event->setState($this->getReference('state_OPENED', State::class));
                 }
             } else {
-                $event->setState(EventState::CREATED);
+                $event->setState($this->getReference('state_CREATED', State::class));
             }
 
             $startAt = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+2 months'));
@@ -53,12 +53,12 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
             $event->setSite($site);
 
             // Dépendance Location
-            $location = $this->getReference('location_', Location::class);
+            $location = $this->getReference('location_'. rand(0, 9), Location::class);
             $event->setLocation($location);
 
             // Dépendance User
-            $user = $this->getReference('user_', User::class);
-            $event->setOrganizer($user);
+            $user = $this->getReference('user_'. rand(0, 9), User::class);
+            $event->setUser($user);
 
             $manager->persist($event);
         }
@@ -68,6 +68,6 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [SiteFixtures::class, LocationFixtures::class, UserFixtures::class];
+        return [SiteFixtures::class, LocationFixtures::class, UserFixtures::class, StateFixtures::class];
     }
 }

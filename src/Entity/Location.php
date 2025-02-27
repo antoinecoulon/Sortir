@@ -22,7 +22,7 @@ class Location
     #[ORM\Column(nullable: true)]
     private ?int $streetNumber = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 50)]
     private ?string $city = null;
 
     #[ORM\Column(length: 5)]

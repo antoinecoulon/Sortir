@@ -25,12 +25,13 @@ class EventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e');
         $qb->select('e.id as eventId, e.name, e.description, e.maxParticipant, 
-                            e.startAt, e.endAt, e.state, 
+                            e.startAt, e.endAt, s.name as state, 
                             organizer.id as organizerId, organizer.name as organizerName, organizer.email as organizerEmail, 
                             COUNT(participant.id) as inscriptionCount')
             ->leftJoin('e.participants', 'participant')
-            ->leftJoin('e.organizer', 'organizer')
-            ->groupBy('e.id', 'e.name', 'e.description', 'e.maxParticipant', 'e.startAt', 'e.endAt', 'e.state', 'organizer.id');
+            ->leftJoin('e.user', 'organizer')
+            ->leftJoin('e.state', 's')
+            ->groupBy('e.id', 'e.name', 'e.description', 'e.maxParticipant', 'state', 'e.startAt', 'e.endAt', 'organizer.id');
         return $qb->getQuery()->getArrayResult();
     }
 

@@ -26,7 +26,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $user->setPseudo($faker->userName());
            $user->setName($faker->lastName());
            $user->setFirstName($faker->firstName());
-           $user->setPassword($faker->password());
+           $user->setPassword('$2y$13$ZayE0.fuVPDs9oN0HXzR/.EYcgaP9JehTxqZirZ4GNbEnwQlrVxwC');
 
            $phoneNumber = $faker->numerify('0#########'); // Génère un numéro avec 10 chiffres
            $user->setPhone($phoneNumber);
@@ -40,11 +40,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $user->setSite($site);
 
            $manager->persist($user);
-
-           $this->setReference('user_', $user);
-
+           $this->setReference('user_'.$i, $user);
        }
-
         $manager->flush();
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\EventState;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -38,7 +37,7 @@ class Event
     #[ORM\Column]
     private ?bool $isPublished = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column]
@@ -57,8 +56,8 @@ class Event
     private ?\DateTimeImmutable $inscriptionLimitAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $organizer = null;
+    #[ORM\JoinColumn(referencedColumnName: 'id')]
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
@@ -76,8 +75,9 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $participants;
 
-    #[ORM\Column(type: 'event_state')]
-    private ?EventState $state = null;
+    #[ORM\ManyToOne(inversedBy: 'events')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?State $state = null;
 
     public function __construct()
     {
@@ -185,14 +185,14 @@ class Event
         return $this;
     }
 
-    public function getOrganizer(): ?User
+    public function getUser(): ?User
     {
-        return $this->organizer;
+        return $this->user;
     }
 
-    public function setOrganizer(?User $organizer): static
+    public function setUser(?User $user): static
     {
-        $this->organizer = $organizer;
+        $this->user = $user;
 
         return $this;
     }
@@ -245,20 +245,22 @@ class Event
         return $this;
     }
 
-    public function getState(): ?EventState
-    {
-        return $this->state;
-    }
-
-    public function setState(EventState $state): static
-    {
-        $this->state = $state;
-        return $this;
-    }
 
     #[ORM\PrePersist]
     public function prePersist(): void
     {
-        $this->setState(EventState::CREATED);
+
+    }
+
+    public function getState(): ?State
+    {
+        return $this->state;
+    }
+
+    public function setState(?State $state): static
+    {
+        $this->state = $state;
+
+        return $this;
     }
 }

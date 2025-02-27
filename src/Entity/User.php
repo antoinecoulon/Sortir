@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Trop long ! Maximum {{ limit }} caractères.')]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column]
