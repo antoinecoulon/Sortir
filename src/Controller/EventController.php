@@ -88,9 +88,15 @@ final class EventController extends AbstractController
 
         $inscriptionCount = $this->eventRepository->findInscriptionCount($event->getId());
 
+        $registered = false;
+        if ($event->getParticipants()->contains($this->getUser())) {
+            $registered = $event->getParticipants()->contains($this->getUser());
+        }
+
         return $this->render('event/detail.html.twig', [
             'event' => $event,
             'inscriptionCount' => $inscriptionCount,
+            'registered' => $registered,
         ]);
     }
 
@@ -131,6 +137,27 @@ final class EventController extends AbstractController
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "La sortie a bien été publié");
+        return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+    }
+
+    /**
+     * @param Event $event
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/event/register/{id}', name: 'app_event_register', requirements: ['id' => '\d+'])]
+    public function register(Event $event, Request $request): Response
+    {
+        if ($event->getParticipants()->contains($this->getUser())) {
+            // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
+            $this->addFlash('danger', 'Vous êtes déjà inscrit à cet event');
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
+        $event->addParticipant($this->getUser());
+        $this->em->persist($event);
+        $this->em->flush();
+        $this->addFlash('success', "Vous êtes maintenant inscrit à l'événement {$event->getName()}");
         return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
     }
 }
