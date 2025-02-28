@@ -3,11 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Event;
-use App\Entity\State;
 use App\Form\EventType;
-
 use App\Repository\EventRepository;
-use App\Repository\StateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,15 +64,6 @@ final class EventController extends AbstractController
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $stateRepo = $this->em->getRepository(State::class);
-            if($event->isPublished()) {
-                $stateCreated = $stateRepo->findOneBy(['name' => 'CREATED']);
-                $event->setState($stateCreated);
-            } else {
-                $stateOpened = $stateRepo->findOneBy(['name' => 'OPENED']);
-                $event->setState($stateOpened);
-            }
-
             $event->setOrganizer($this->getUser());
             $this->em->persist($event);
             $this->em->flush();
@@ -133,7 +121,7 @@ final class EventController extends AbstractController
             return throw new AccessDeniedException("Action interdite");
         }
         $event->setIsPublished(true);
-        $event->setState(new State(State::CREATED));
+        $event->setState(Event::OPENED);
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "La sortie a bien été publié");

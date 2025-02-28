@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use App\Entity\Event;
 use App\Entity\Location;
 use App\Entity\Site;
-use App\Entity\State;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -29,12 +28,12 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
             if ($event->isPublished()){
                 $eventCancelled = $faker->boolean();
                 if ($eventCancelled){
-                    $event->setState($this->getReference('state_CANCELLED', State::class));
+                    $event->setState(Event::CANCELLED);
                 } else {
-                    $event->setState($this->getReference('state_OPENED', State::class));
+                    $event->setState(Event::OPENED);
                 }
             } else {
-                $event->setState($this->getReference('state_CREATED', State::class));
+                $event->setState(Event::CREATED);
             }
 
             $startAt = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+2 months'));
@@ -68,6 +67,6 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [SiteFixtures::class, LocationFixtures::class, UserFixtures::class, StateFixtures::class];
+        return [SiteFixtures::class, LocationFixtures::class, UserFixtures::class];
     }
 }
