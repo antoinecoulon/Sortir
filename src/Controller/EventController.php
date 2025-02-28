@@ -155,6 +155,7 @@ final class EventController extends AbstractController
     }
 
     /**
+     * 2003 - S'inscrire à un événement
      * @param Event $event
      * @param Request $request
      * @return Response
@@ -172,6 +173,22 @@ final class EventController extends AbstractController
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "Vous êtes maintenant inscrit à l'événement {$event->getName()}");
+        return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+    }
+
+    /**
+     * 2004 - Se désister d'un événement
+     * @param Event $event
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('event/unregister/{id}', name: 'app_event_unregister', requirements: ['id' => '\d+'])]
+    public function unregister(Event $event, Request $request): Response
+    {
+        $event->removeParticipant($this->getUser());
+        $this->em->persist($event);
+        $this->em->flush();
+        $this->addFlash('success', "Vous vous êtes désisté de l'événement {$event->getName()}");
         return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
     }
 }
