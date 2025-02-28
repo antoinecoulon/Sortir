@@ -99,7 +99,7 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
-
+        // Peut être remplacé par la méthode getParticipants()->count()
         $inscriptionCount = $this->eventRepository->findInscriptionCount($event->getId());
 
         $isRegistered = false;
@@ -166,6 +166,11 @@ final class EventController extends AbstractController
         if ($event->getParticipants()->contains($this->getUser())) {
             // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
             $this->addFlash('danger', 'Vous êtes déjà inscrit à cet event');
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
+        if ($event->getMaxParticipant() <= $event->getParticipants()->count()) {
+            $this->addFlash('danger', 'Le nombre de participants maximum est déjà atteint');
             return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
         }
 
