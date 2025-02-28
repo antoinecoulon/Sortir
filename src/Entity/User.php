@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Trop long ! Maximum {{ limit }} caractères.')]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column]
@@ -92,6 +92,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
     private Collection $events;
+
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'user')]
+    private Collection $userEvents;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
@@ -270,6 +273,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeEvent(Event $event): static
     {
         if ($this->events->removeElement($event)) {
+            $event->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getUserEvents(): Collection
+    {
+        return $this->userEvents;
+    }
+
+    public function addUserEvent(Event $event): static
+    {
+        if (!$this->userEvents->contains($event)) {
+            $this->userEvents->add($event);
+            $event->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserEvent(Event $event): static
+    {
+        if ($this->userEvents->removeElement($event)) {
             $event->removeParticipant($this);
         }
 

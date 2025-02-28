@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Event;
-use App\Enum\EventState;
 use App\Form\EventType;
-
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -65,7 +63,7 @@ final class EventController extends AbstractController
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $event->setOrganizer($this->getUser());
             $this->em->persist($event);
             $this->em->flush();
@@ -82,21 +80,20 @@ final class EventController extends AbstractController
     public function detail(Event $event): Response
     {
 
-        $inscriptionCount = $this->eventRepository->findInscriptionCountByEventId($event->getId());
-        dd($inscriptionCount);
+        // $inscriptionCount = $this->eventRepository->findInscriptionCountByEventId($event->getId());
+        // dd($inscriptionCount);
 
         return $this->render('event/detail.html.twig', [
             'event' => $event,
-    ]);
+        ]);
     }
 
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
-
     public function update(Event $event, Request $request): Response
     {
         $form = $this->createForm(EventType::class, $event, ['display_isPublish' => false]);
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($event);
             $this->em->flush();
             $this->addFlash('success', "La sortie {$event->getName()} a bien été modifié");
@@ -120,11 +117,11 @@ final class EventController extends AbstractController
     #[Route('/event/publish/{id}', name: 'app_event_publish', requirements: ['id' => '\d+'])]
     public function publish(Event $event): Response
     {
-        if($event->isPublished() || !$event->getOrganizer() || $event->getOrganizer()->getId() !== $this->getUser()->getId()) {
+        if ($event->isPublished() || !$event->getOrganizer() || $event->getOrganizer()->getId() !== $this->getUser()->getId()) {
             return throw new AccessDeniedException("Action interdite");
         }
         $event->setIsPublished(true);
-        $event->setState(EventState::OPENED);
+        $event->setState(Event::OPENED);
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "La sortie a bien été publié");

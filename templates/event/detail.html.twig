@@ -95,12 +95,15 @@
     </div>
 </div>
 
-    <!-- Import de la map et passage des données au JS -->
+    {% block javascripts %}
+        <script src="{{ asset('js/leaflet.js') }}"></script>
+    {% endblock %}
+
     <script>
         let latitude = {{ event.location.latitude }};
         let longitude = {{ event.location.longitude }};
         let locationName = "{{ event.location.name }}";
         let markerLocation = "{{ asset('/images/location-icon.png') }}";
+
     </script>
-    <script src="{{ asset('js/leaflet.js') }}"></script>
 {% endblock %}

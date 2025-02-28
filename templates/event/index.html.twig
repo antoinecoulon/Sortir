@@ -3,11 +3,21 @@
 {% block title %}{{ parent() }} | Liste des évênements{% endblock %}
 
 {% block body %}
+    <div class="flex justify-between items-center">
     <div>Page d'accueil</div>
 
     <div>
         <h2>Filtrer les sorties</h2>
         <p>TODO...</p>
+    </div>
+
+    <div>
+        <a href="{{ path('app_event_create') }}">
+            <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                Créer une sortie
+            </button>
+        </a>
+    </div>
     </div>
 
     {# Afficher les sorties #}
@@ -57,14 +67,14 @@
                     {{ inscriptionCount[event.eventId] ?? 0 }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.state.value }}
+                    {{ event.state }}
                 </td>
                 <td class="px-6 py-4">
                     <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
                 </td>
                 <td class="px-6 py-4">
                     {{event.organizerName ? event.organizerName : 'Inconnu' }}
-                </td>
+                </td>f
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
                     {% if current_user is same as(event.organizerEmail) %}
@@ -80,11 +90,6 @@
         </table>
     </div>
 
-    <div>
-        <a href="{{ path('app_event_create') }}">
-            <button type="button" class="btn btn-primary">Créer une sortie</button>
-        </a>
-    </div>
 
 
 {% endblock %}

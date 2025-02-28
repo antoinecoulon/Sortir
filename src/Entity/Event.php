@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\EventState;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,6 +13,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class Event
 {
+    public const string CREATED = 'CREATED';
+    public const string OPENED = 'OPENED';
+    public const string CLOSED = 'CLOSED';
+    public const string PROCESSING = 'PROCESSING';
+    public const string FINISHED = 'FINISHED';
+    public const string CANCELLED = 'CANCELLED';
+
+    public const array VALID_STATES = [
+        self::CREATED,
+        self::OPENED,
+        self::CLOSED,
+        self::PROCESSING,
+        self::FINISHED,
+        self::CANCELLED
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -38,7 +53,7 @@ class Event
     #[ORM\Column]
     private ?bool $isPublished = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column]
@@ -56,7 +71,7 @@ class Event
     #[Assert\Type(type: \DateTimeImmutable::class, message: 'La date de fin d\'inscription doit être renseigné')]
     private ?\DateTimeImmutable $inscriptionLimitAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'events')]
+    #[ORM\ManyToOne(inversedBy: 'userEvents')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $organizer = null;
 
@@ -76,8 +91,8 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $participants;
 
-    #[ORM\Column(type: 'event_state')]
-    private ?EventState $state = null;
+    #[ORM\Column]
+    private ?string $state = null;
 
     public function __construct()
     {
@@ -245,20 +260,32 @@ class Event
         return $this;
     }
 
-    public function getState(): ?EventState
+    public function getState(): ?string
     {
         return $this->state;
     }
 
-    public function setState(EventState $state): static
+    public function setState(?string $state): static
     {
+        if (!in_array($state, $this::VALID_STATES)) {
+            throw new \InvalidArgumentException(sprintf(
+                'État invalide "%s". Les états valides sont: %s',
+                $state,
+                implode(', ', $this::VALID_STATES)
+            ));
+        }
         $this->state = $state;
+
         return $this;
     }
 
-    #[ORM\PrePersist]
-    public function prePersist(): void
+    #[ORM\PrePersist()]
+    public function prepersist(): void
     {
-        $this->setState(EventState::CREATED);
+        if($this->isPublished()) {
+            $this->setState($this::OPENED);
+        } else {
+            $this->setState($this::CREATED);
+        }
     }
 }
