@@ -43,7 +43,7 @@ final class EventController extends AbstractController
             // return $this->redirectToRoute('app_login');
         }
 
-        // Récupère la liste des events avec le nombre d'inscriptions pour chaque
+        // Récupère la liste des events avec le nombre d'inscriptions pour chaque, pas objet!
         $events = $this->eventRepository->findAllEventsWithInscriptionCount();
         // On récupère un tableau associatif qu'on transforme en tableau indexé par l'ID pour faciliter la récupération du compte d'inscrits
         $inscriptionsCountById = [];
@@ -51,9 +51,23 @@ final class EventController extends AbstractController
             $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
         }
 
+        // Retourne des objets Event
+        $allEvents = $this->eventRepository->findAll();
+        $isRegisteredById = [];
+        // Pour chaque événement on teste si l'utilisateur courant y est inscrit
+        foreach ($allEvents as $event) {
+            $eventId = $event->getId();
+            if ($event->getParticipants()->contains($this->getUser())) {
+                $isRegisteredById[$eventId] = true;
+            } else {
+                $isRegisteredById[$eventId] = false;
+            }
+        }
+
         return $this->render('event/index.html.twig', [
             'events' => $events,
             'inscriptionCount' => $inscriptionsCountById,
+            'isRegisteredById' => $isRegisteredById,
             'current_user' => $current_user,
         ]);
     }
@@ -88,15 +102,15 @@ final class EventController extends AbstractController
 
         $inscriptionCount = $this->eventRepository->findInscriptionCount($event->getId());
 
-        $registered = false;
+        $isRegistered = false;
         if ($event->getParticipants()->contains($this->getUser())) {
-            $registered = $event->getParticipants()->contains($this->getUser());
+            $isRegistered = true;
         }
 
         return $this->render('event/detail.html.twig', [
             'event' => $event,
             'inscriptionCount' => $inscriptionCount,
-            'registered' => $registered,
+            'isRegistered' => $isRegistered,
         ]);
     }
 
