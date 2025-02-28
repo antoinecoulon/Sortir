@@ -20,6 +20,36 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            ['ROLE_ADMIN']
        ];
 
+       $teams = [
+           'justine',
+           'alex',
+           'antoine',
+           'ghislain'
+       ];
+
+       foreach ($teams as $i=>$team) {
+           $user = new User();
+
+           $user->setPseudo($team);
+           $user->setName($faker->lastName());
+           $user->setFirstName($faker->firstName());
+           $user->setPassword('$2y$13$ZayE0.fuVPDs9oN0HXzR/.EYcgaP9JehTxqZirZ4GNbEnwQlrVxwC');
+
+           $phoneNumber = $faker->numerify('0#########'); // Génère un numéro avec 10 chiffres
+           $user->setPhone($phoneNumber);
+
+           $user->setEmail($team. '@gmail.com');
+           $user->setRoles(['ROLE_ADMIN']);
+           $user->setPhoto($faker->image());
+           $user->setIsActive(true);
+
+           $site = $this->getReference('site_' . rand(0, 3), Site::class);
+           $user->setSite($site);
+
+           $manager->persist($user);
+           $this->setReference('user_'.$i, $user);
+       }
+
        for ($i = 0; $i < 10; $i++) {
            $user = new User();
 
