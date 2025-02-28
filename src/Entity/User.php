@@ -58,7 +58,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank(message: 'Le mot de passe ne peut pas être vide')]
     private ?string $password = null;
 
     #[ORM\Column(length: 20)]
@@ -326,6 +325,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isVerified;
     }
 
+    #[ORM\PrePersist]
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;

@@ -22,33 +22,37 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isEdit = $options['is_edit'] ?? false;
+
         $builder
             ->add('pseudo', TextType::class, [
                 'label' => 'Pseudo'
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email'
-            ])
-            ->add('plainPassword', RepeatedType::class, [
+            ]);
+            $passwordConstraints = [];
+            if (!$isEdit) {
+                $passwordConstraints[] = new NotBlank([
+                    'message' => 'Le mot de passe ne peut pas être vide',
+                ]);
+            }
+
+            $passwordConstraints[] = new PasswordStrength([
+                'message' => 'Entrez un mot de passe plus sécurisé',
+                'minScore' => PasswordStrength::STRENGTH_WEAK
+            ]);
+
+            $builder->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,
-                'required' => false,
+                'required' => !$isEdit,
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'first_options' => [
-                    'label' => 'Mot de Passe',
-                    'constraints' => [
-                        new Optional([
-                            new NotBlank([
-                                'message' => 'Le mot de passe ne peut pas être vide',
-                            ]),
-                            new PasswordStrength([
-                                'message' => 'Entrez un mot de passe plus sécurisé',
-                                'minScore' => PasswordStrength::STRENGTH_WEAK
-                            ])
-                        ])
-                    ],
+                    'label' => $isEdit ? 'Nouveau mot de passe (laisser vide pour conserver l\'actuel)' : 'Mot de Passe',
+                    'constraints' => $passwordConstraints,
                 ],
                 'second_options' => [
                     'label' => 'Confirmer le Mot de Passe',
@@ -77,6 +81,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'is_edit' => false,
         ]);
     }
 }
