@@ -29,34 +29,26 @@ final class EventController extends AbstractController
     #[Route(['/', '/event'], name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
-
         // On teste si un utilisateur est connecté
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // Récupère la valeur user.email de l'utilisateur connecté
-            $current_user = $this->getUser()->getUserIdentifier();
+            $this->addFlash('success', "Bienvenue {$this->getUser()->getName()}");
         } else {
-            // NOTE 27/02: théoriquement maintenant l'utilisateur sera toujours connecté avant d'arriver sur cette page !
-            // L'utilisateur n'est pas connecté, définir une valeur par défaut
-            $current_user = 'Utilisateur non connecté';
-            // et le rediriger vers app_login avec un message clair
-            // $this->addFlash('error', 'Vous avez tenté d'accéder à une page à laquelle vous n'avez pas accès. Veuillez vous identifier.');
-            // return $this->redirectToRoute('app_login');
+            $this->addFlash('error', 'Vous avez tenté d\'accéder à une page à laquelle vous n\'avez pas accès. Veuillez vous identifier.');
+            return $this->redirectToRoute('app_login');
         }
 
-        // Récupère la liste des events avec le nombre d'inscriptions pour chaque, pas objet!
-        $events = $this->eventRepository->findAllEventsWithInscriptionCount();
-        // On récupère un tableau associatif qu'on transforme en tableau indexé par l'ID pour faciliter la récupération du compte d'inscrits
+        // On récupère la liste des événements
+        $events = $this->eventRepository->findAll();
+        // On initialise nos variables
         $inscriptionsCountById = [];
-        foreach ($events as $count) {
-            $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
-        }
-
-        // Retourne des objets Event
-        $allEvents = $this->eventRepository->findAll();
         $isRegisteredById = [];
-        // Pour chaque événement on teste si l'utilisateur courant y est inscrit
-        foreach ($allEvents as $event) {
+        // Pour chaque événement...
+        foreach ($events as $event) {
+            // On récupère l'ID
             $eventId = $event->getId();
+            // On compte le nombre de participants
+            $inscriptionsCountById[$eventId] = $event->getParticipants()->count();
+            // On teste si l'utilisateur connecté est inscrit
             if ($event->getParticipants()->contains($this->getUser())) {
                 $isRegisteredById[$eventId] = true;
             } else {
@@ -68,7 +60,6 @@ final class EventController extends AbstractController
             'events' => $events,
             'inscriptionCount' => $inscriptionsCountById,
             'isRegisteredById' => $isRegisteredById,
-            'current_user' => $current_user,
         ]);
     }
 
@@ -99,7 +90,7 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
-        // Peut être remplacé par la méthode getParticipants()->count()
+        // todo: Peut être remplacé par la méthode getParticipants()->count()
         $inscriptionCount = $this->eventRepository->findInscriptionCount($event->getId());
 
         $isRegistered = false;
