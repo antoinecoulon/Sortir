@@ -97,7 +97,7 @@ final class EventController extends AbstractController
         if (!$this->eventService->isEventCreator($event, $this->getUser())) {
             throw $this->createAccessDeniedException("Modification interdite");
         }
-        $form = $this->createForm(EventType::class, $event);
+        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($event);
@@ -141,12 +141,15 @@ final class EventController extends AbstractController
     }
 
     #[Route('/event/cancel/{id}', name: 'app_event_cancel', requirements: ['id' => '\d+'])]
-    public function cancel(Event $event): Response
+    public function cancel(Event $event, Request $request): Response
     {
         if (!$this->eventService->isEventCreator($event, $this->getUser()) || !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Annulation interdite");
         }
+        $cancelMessage = $request->query->get("cancelMessage") || "Motif inconnu";
+
         $event->setState(Event::CANCELLED);
+        $event->setCancelMessage($cancelMessage);
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "La sortie a bien été annulé");

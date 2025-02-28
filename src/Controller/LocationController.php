@@ -35,18 +35,15 @@ final class LocationController extends AbstractController
     public function create(Request $request, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $cleanData = [];
-        foreach($data as $key=>$value) {
-            $cleanData[$key] = htmlspecialchars($value);
-        }
+
         $location = new Location();
-        $location->setName($cleanData['name'] ?? '');
-        $location->setStreet($cleanData['street'] ?? '');
-        $location->setCp($cleanData['cp'] ?? '');
-        $location->setStreetNumber((int)$cleanData['streetNumber'] ?? null);
-        $location->setCity($cleanData['city'] ?? '');
-        $location->setLatitude($cleanData['latitude'] ?? null);
-        $location->setLongitude($cleanData['longitude'] ?? null);
+        $location->setName($data['name'] ?? '');
+        $location->setStreet($data['street'] ?? '');
+        $location->setCp($data['cp'] ?? '');
+        $location->setStreetNumber((int)$data['streetNumber'] ?? null);
+        $location->setCity($data['city'] ?? '');
+        $location->setLatitude($data['latitude'] ?? null);
+        $location->setLongitude($data['longitude'] ?? null);
 
         $errors = $validator->validate($location);
         if(count($errors) > 0) {
