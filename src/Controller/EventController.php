@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,15 +77,20 @@ final class EventController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Event $event
+     * @return Response
+     * @throws Exception
+     */
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
 
-        // $inscriptionCount = $this->eventRepository->findInscriptionCountByEventId($event->getId());
-        // dd($inscriptionCount);
+        $inscriptionCount = $this->eventRepository->findInscriptionCount($event->getId());
 
         return $this->render('event/detail.html.twig', [
             'event' => $event,
+            'inscriptionCount' => $inscriptionCount,
         ]);
     }
 
