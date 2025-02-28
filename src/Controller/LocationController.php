@@ -43,21 +43,20 @@ final class LocationController extends AbstractController
         $location->setName($cleanData['name'] ?? '');
         $location->setStreet($cleanData['street'] ?? '');
         $location->setCp($cleanData['cp'] ?? '');
-        $location->setStreetNumber($cleanData['streetNumber'] ?? null);
+        $location->setStreetNumber((int)$cleanData['streetNumber'] ?? null);
         $location->setCity($cleanData['city'] ?? '');
         $location->setLatitude($cleanData['latitude'] ?? null);
         $location->setLongitude($cleanData['longitude'] ?? null);
 
         $errors = $validator->validate($location);
-        dump($location);
         if(count($errors) > 0) {
             return new JsonResponse(['message' => 'Le formulaire n\'est pas valide'], 400);
         }
 
         $this->em->persist($location);
         $this->em->flush();
-        $this->addFlash('success', "Le lieu {$location->getName()} a bien été crée");
-
-        return new JsonResponse(['message' => 'success']);
+        $locationId = $location->getId();
+        $locationName = $location->getName();
+        return new JsonResponse(['message' => 'success', 'locationId' => $locationId, 'locationName' =>$locationName ]);
     }
 }

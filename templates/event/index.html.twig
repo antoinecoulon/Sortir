@@ -77,10 +77,10 @@
                 </td>f
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
-                    {% if current_user is same as(event.organizerEmail) %}
-                    <a href="#">Modifier</a>
+                    {% if is_granted('IS_AUTHENTICATED') and app.user.id == event.organizerId %}
+                    <a href="{{ path('app_event_update', {id: event.eventId}) }}">Modifier</a>
                     {% endif %}
-                    {% if current_user is same as(event.organizerEmail) or is_granted('ROLE_ADMIN') %}
+                    {% if is_granted('IS_AUTHENTICATED') and app.user.id == event.organizerId or is_granted('ROLE_ADMIN') %}
                     <a href="#">Annuler</a>
                     {% endif %}
                 </td>
@@ -89,7 +89,6 @@
             </tbody>
         </table>
     </div>
-
 
 
 {% endblock %}

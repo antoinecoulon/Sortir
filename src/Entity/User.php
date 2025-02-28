@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
     private Collection $events;
 
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'organizer')]
     private Collection $userEvents;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

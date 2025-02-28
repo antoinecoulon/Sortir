@@ -71,7 +71,7 @@
 <div class="relative">
 {% for label, messages in app.flashes %}
 <div id="toast-{{ label }}"
-     class="flex absolute bg-blue-200 left-1/2 transform -translate-x-1/2 top-5  items-center w-full max-w-xs   p-4 mb-4 text-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-900"
+     class="z-10 flex absolute bg-blue-200 left-1/2 transform -translate-x-1/2 top-5  items-center w-full max-w-xs   p-4 mb-4 text-gray-500 rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-900"
      role="alert">
     {% if label == 'success' %}
         <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
