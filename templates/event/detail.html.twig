@@ -30,7 +30,9 @@
                 <p class="mb-3 font-normal dark:text-gray-200">{{ inscriptionCount }} inscrits / {{ event.maxParticipant }} places disponibles</p>
                 {% if inscriptionCount < event.maxParticipant and app.user.id != event.organizer.id and isRegistered == false %}
                     <a href="{{ path('app_event_register', {id: event.id}) }}">
-                        <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">S'inscrire</button>
+                        <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                            S'inscrire
+                        </button>
                     </a>
                 {% elseif inscriptionCount >= event.maxParticipant %}
                     <p class="mb-3 font-normal text-red-700 dark:text-red-400">
@@ -38,9 +40,12 @@
                         L'événement est complet !
                     </p>
                 {% endif %}
+                
                 {% if is_granted('IS_AUTHENTICATED') and app.user.id is same as(event.organizer.id) %}
                     <a href="{{ path('app_event_update', {id: event.id}) }}">
-                        <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Modifier</button>
+                        <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                            Modifier
+                        </button>
                     </a>
                 {% endif %}
             </div>
