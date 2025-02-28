@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,6 +33,26 @@ class EventRepository extends ServiceEntityRepository
             ->leftJoin('e.organizer', 'organizer')
             ->groupBy('e.id', 'e.name', 'e.description', 'e.maxParticipant', 'e.state', 'e.startAt', 'e.endAt', 'organizer.id');
         return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param int $eventId
+     * @return int
+     * @throws Exception
+     */
+    public function findInscriptionCount(int $eventId): int
+    {
+        try {
+            $connexion = $this->getEntityManager()->getConnection();
+            $sql = '
+                SELECT COUNT(user_id) FROM event_user
+                WHERE event_id = :eventId
+            ';
+            $result = $connexion->executeQuery($sql, ['eventId' => $eventId])->fetchNumeric();
+            return $result[0];
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
 //    public function findInscriptionCountByEventId(int $eventId): int
