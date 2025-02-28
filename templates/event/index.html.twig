@@ -73,7 +73,7 @@
                     <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
                 </td>
                 <td class="px-6 py-4">
-                    {{event.organizerName ? event.organizerName : 'Inconnu' }}
+                    <a href="{{ path('app_user_detail', {'userId' : event.organizerId}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{event.organizerName ? event.organizerName : 'Inconnu' }}</a>
                 </td>f
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
