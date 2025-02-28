@@ -24,7 +24,6 @@
                 {% set duree = date(event.endAt).diff(date(event.startAt)) %}
                 {% set leftDays = duree.days %}
                 {% set leftHours = duree.h %}
-                {# todo: format personnalisé (voir extension twig personnalisée #}
                 <p class="mb-3 font-normal dark:text-gray-200">du {{ event.startAt | date('d-m-Y à H:i') }} au {{ event.endAt | date('d-m-Y à H:i') }}</p>
                 <p class="mb-3 font-normal dark:text-gray-200">({{ leftDays }} jours, {{ leftHours }} heures restantes)</p>
                 <p class="mb-3 font-normal dark:text-gray-200">S'inscrire avant le {{ event.inscriptionLimitAt | date('d-m-Y à H:i') }}</p>
