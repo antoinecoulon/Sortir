@@ -185,6 +185,12 @@ final class EventController extends AbstractController
     #[Route('event/unregister/{id}', name: 'app_event_unregister', requirements: ['id' => '\d+'])]
     public function unregister(Event $event, Request $request): Response
     {
+        if (!$event->getParticipants()->contains($this->getUser())) {
+            // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
+            $this->addFlash('danger', 'Vous n\'êtes pas inscrit à cet event');
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
         $event->removeParticipant($this->getUser());
         $this->em->persist($event);
         $this->em->flush();
