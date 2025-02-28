@@ -22,6 +22,13 @@ symfony console doctrine:database:create
 ```sh
 symfony console do:mi:mi
 ```
+### Configurer le mailer
+
+- exemple: MAILER_DSN=smtp://localhost:1025
+ne pas oublier de lancer MailHog
+```sh
+symfony console messenger:consume async
+```
 
 ### Lancer l'application
 
