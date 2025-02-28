@@ -18,9 +18,9 @@
                 <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">{{ event.description }}</p>
                 {% set duree = date(event.endAt).diff(date(event.startAt)) %}
                 {# todo: format personnalisé (voir extension twig personnalisée #}
-                <p class="mb-3 font-normal">du {{ event.startAt | date('d-m-Y à H:i') }} au {{ event.endAt | date('d-m-Y à H:i') }} ({{ duree | date }})</p>
-                <p class="mb-3 font-normal">S'inscrire avant le {{ event.inscriptionLimitAt | date('d-m-Y à H:i') }}</p>
-                <p class="mb-3 font-normal">? inscrits / {{ event.maxParticipant }} places disponibles</p>
+                <p class="mb-3 font-normal dark:text-gray-200">du {{ event.startAt | date('d-m-Y à H:i') }} au {{ event.endAt | date('d-m-Y à H:i') }} ({{ duree | date }})</p>
+                <p class="mb-3 font-normal dark:text-gray-200">S'inscrire avant le {{ event.inscriptionLimitAt | date('d-m-Y à H:i') }}</p>
+                <p class="mb-3 font-normal dark:text-gray-200">? inscrits / {{ event.maxParticipant }} places disponibles</p>
             </div>
         </div>
 
@@ -34,10 +34,10 @@
             </div>
             <div class="flex-col text-center">
                 <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">{{ event.location.streetNumber ?: ''}} {{ event.location.street }}, {{ event.location.cp }} {{ event.location.city }}</p>
-                <p class="mb-3 font-normal">Site de {{ event.site.name }}</p>
-                <p class="mb-3 font-normal">Lat. : {{ event.location.latitude }} - Long. : {{ event.location.longitude }}</p>
+                <p class="mb-3 font-normal dark:text-gray-200">Site de {{ event.site.name }}</p>
+                <p class="mb-3 font-normal dark:text-gray-200">Lat. : {{ event.location.latitude }} - Long. : {{ event.location.longitude }}</p>
             </div>
-            <div id="map" class="h-[360px] border border-gray-700"></div>
+            <div id="map" class="h-[360px] border border-gray-700 dark:border-gray-200"></div>
         </div>
 
         <div class="row-span-1 col-span-1" id="participants">
