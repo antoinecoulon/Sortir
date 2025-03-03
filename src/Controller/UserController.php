@@ -47,12 +47,12 @@ final class UserController extends AbstractController
     public function update(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
-        //dd($user);
+
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour modifier votre profil');
         }
 
-        $userForm = $this->createForm(UserType::class, $user);
+        $userForm = $this->createForm(UserType::class, $user, ['is_edit' => true]);
 
         $userForm->handleRequest($request);
 
