@@ -7,6 +7,7 @@ use App\Form\EventType;
 use App\Repository\EventRepository;
 use App\Service\EventService;
 use DateTime;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,42 +22,56 @@ final class EventController extends AbstractController
     private readonly EventRepository $eventRepository;
     private readonly EntityManagerInterface $em;
     private readonly EventService $eventService;
+    private readonly \DateTimeImmutable $now;
 
     public function __construct(EventRepository $eventRepository, EntityManagerInterface $em, EventService $eventService)
     {
         $this->eventRepository = $eventRepository;
         $this->em = $em;
         $this->eventService = $eventService;
+        $this->now = new \DateTimeImmutable();
     }
 
     #[Route(['/', '/event'], name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
-
         // On teste si un utilisateur est connecté
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // Récupère la valeur user.email de l'utilisateur connecté
-            $current_user = $this->getUser()->getUserIdentifier();
+            $this->addFlash('success', "Bienvenue {$this->getUser()->getName()}");
         } else {
-            // NOTE 27/02: théoriquement maintenant l'utilisateur sera toujours connecté avant d'arriver sur cette page !
-            // L'utilisateur n'est pas connecté, définir une valeur par défaut
-            $current_user = 'Utilisateur non connecté';
-            // et le rediriger vers app_login avec un message clair
-            // $this->addFlash('error', 'Vous avez tenté d'accéder à une page à laquelle vous n'avez pas accès. Veuillez vous identifier.');
-            // return $this->redirectToRoute('app_login');
+            $this->addFlash('error', 'Vous avez tenté d\'accéder à une page à laquelle vous n\'avez pas accès. Veuillez vous identifier.');
+            return $this->redirectToRoute('app_login');
         }
 
-        // Récupère la liste des events avec le nombre d'inscriptions pour chaque
-        $events = $this->eventRepository->findAllEventsWithInscriptionCount();
-        // On récupère un tableau associatif qu'on transforme en tableau indexé par l'ID pour faciliter la récupération du compte d'inscrits
+        // On récupère la liste des événements
+        $events = $this->eventRepository->findAll();
+
+        // On initialise nos variables
         $inscriptionsCountById = [];
-        foreach ($events as $count) {
-            $inscriptionsCountById[$count['eventId']] = $count['inscriptionCount'];
+        $isRegisteredById = [];
+
+        // Pour chaque événement...
+        foreach ($events as $event) {
+            // On récupère l'ID
+            $eventId = $event->getId();
+            // On compte le nombre de participants
+            $inscriptionsCountById[$eventId] = $event->getParticipants()->count();
+            // On teste si l'utilisateur connecté est inscrit
+            if ($event->getParticipants()->contains($this->getUser())) {
+                $isRegisteredById[$eventId] = true;
+            } else {
+                $isRegisteredById[$eventId] = false;
+            }
+            // On teste si la date de clotûre des inscriptions est passée
+            if ($event->getInscriptionLimitAt() <= $this->now) {
+                $event->setState('CLOSED');
+            }
         }
 
         return $this->render('event/index.html.twig', [
             'events' => $events,
             'inscriptionCount' => $inscriptionsCountById,
+            'isRegisteredById' => $isRegisteredById,
         ]);
     }
 
@@ -79,15 +94,32 @@ final class EventController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Event $event
+     * @return Response
+     * @throws Exception
+     */
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
+        $inscriptionCount = $event->getParticipants()->count();
+        $isRegistered = false;
+        if ($event->getParticipants()->contains($this->getUser())) {
+            $isRegistered = true;
+        }
 
-        // $inscriptionCount = $this->eventRepository->findInscriptionCountByEventId($event->getId());
-        // dd($inscriptionCount);
+        // Calculer la date d'inscription limite
+        if ($event->getInscriptionLimitAt() >= $this->now) {
+            $limitIsPassed = false;
+        } else {
+            $limitIsPassed = true;
+        }
 
         return $this->render('event/detail.html.twig', [
             'event' => $event,
+            'inscriptionCount' => $inscriptionCount,
+            'isRegistered' => $isRegistered,
+            'limitIsPassed' => $limitIsPassed,
         ]);
     }
 
@@ -153,6 +185,53 @@ final class EventController extends AbstractController
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "La sortie a bien été annulé");
+
+    /**
+     * 2003 - S'inscrire à un événement
+     * @param Event $event
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/event/register/{id}', name: 'app_event_register', requirements: ['id' => '\d+'])]
+    public function register(Event $event, Request $request): Response
+    {
+        if ($event->getParticipants()->contains($this->getUser())) {
+            // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
+            $this->addFlash('danger', 'Vous êtes déjà inscrit à cet event');
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
+        if ($event->getMaxParticipant() <= $event->getParticipants()->count()) {
+            $this->addFlash('danger', 'Le nombre de participants maximum est déjà atteint');
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
+        $event->addParticipant($this->getUser());
+        $this->em->persist($event);
+        $this->em->flush();
+        $this->addFlash('success', "Vous êtes maintenant inscrit à l'événement {$event->getName()}");
+        return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+    }
+
+    /**
+     * 2004 - Se désister d'un événement
+     * @param Event $event
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('event/unregister/{id}', name: 'app_event_unregister', requirements: ['id' => '\d+'])]
+    public function unregister(Event $event, Request $request): Response
+    {
+        if (!$event->getParticipants()->contains($this->getUser())) {
+            // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
+            $this->addFlash('danger', 'Vous n\'êtes pas inscrit à cet event');
+            return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+        }
+
+        $event->removeParticipant($this->getUser());
+        $this->em->persist($event);
+        $this->em->flush();
+        $this->addFlash('success', "Vous vous êtes désisté de l'événement {$event->getName()}");
         return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
     }
 }

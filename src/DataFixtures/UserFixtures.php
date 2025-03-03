@@ -38,10 +38,11 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $phoneNumber = $faker->numerify('0#########'); // Génère un numéro avec 10 chiffres
            $user->setPhone($phoneNumber);
 
-           $user->setEmail($team. '@gmail.com');
+           $user->setEmail($team. '@campus-eni.fr');
            $user->setRoles(['ROLE_ADMIN']);
            $user->setPhoto($faker->image());
            $user->setIsActive(true);
+           $user->setIsVerified(true);
 
            $site = $this->getReference('site_' . rand(0, 3), Site::class);
            $user->setSite($site);
@@ -65,6 +66,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $user->setRoles($role[array_rand($role)]);
            $user->setPhoto($faker->image());
            $user->setIsActive($faker->boolean());
+           $user->setIsVerified(true);
 
            $site = $this->getReference('site_' . rand(0, 3), Site::class);
            $user->setSite($site);
