@@ -293,6 +293,9 @@
             "./config/routes/web_profiler.yaml"
         ]
     },
+    "symfonycasts/verify-email-bundle": {
+        "version": "v1.17.3"
+    },
     "tales-from-a-dev/flowbite-bundle": {
         "version": "0.7",
         "recipe": {
