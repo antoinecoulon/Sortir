@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello VueController!{% endblock %}
+
+{% block body %}
+<div>
+           <div {{ vue_component('Exemple', {'twigProps' : app.user.pseudo}) }}></div>
+           <div class="bg-red-500 p-8" id="twig-vue">TWIG</div>
+           </div>
+{% endblock %}

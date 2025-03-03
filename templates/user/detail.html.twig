@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-center mb-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ title }}</h1>
+    <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+        {% if user.photo!= null %}
+            <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src={# TODO: {{ asset( "uploads/Photos/" ~ user.photo }} #} alt="{# TODO : {{ user.pseudo }}#}">
+        {% endif %}
+        <div class="flex flex-col justify-between p-4 leading-normal">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ user.pseudo }}</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Nom : {{ user.name }}</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Prénom : {{ user.firstname }}</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Téléphone : {{ user.phone }}</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Email : {{ user.email }}</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Ville de rattachement : {{ user.site.name }}</p>
+
+            {% if app.user == user %}
+                <div class="flex flex-row justify-center items-center gap-5 ">
+                    <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                        <a href="{{ path('app_user_update') }}">Modifier</a>
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block title %}{{ parent() }} - {{ title }}
+
+{% endblock %}
+
+
+
+
+
+
+

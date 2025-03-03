@@ -1,0 +1,23 @@
+{
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "serve": "conc \"symfony serve\" \"npm run dev\""
+    },
+    "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@symfony/stimulus-bridge": "^3.2.0",
+        "@symfony/ux-vue": "file:vendor/symfony/ux-vue/assets",
+        "vite": "^6.0",
+        "vite-plugin-symfony": "^8.0",
+        "vue": "^3.0"
+    },
+    "dependencies": {
+        "@tailwindcss/vite": "^4.0.9",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "flowbite": "^3.1.2",
+        "leaflet": "^1.9.4"
+    }
+}

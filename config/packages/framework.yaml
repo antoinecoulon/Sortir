@@ -1,0 +1,25 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    form:
+        csrf_protection:
+            enabled: true
+            field_name: '_csrf_token'
+    secret: '%env(APP_SECRET)%'
+    annotations: false
+    http_method_override: false
+    handle_all_throwables: true
+
+    # Enables session support. Note that the session will ONLY be started if you read or write from it.
+    # Remove or comment this section to explicitly disable session support.
+    session: true
+
+    #esi: true
+    #fragments: true
+    php_errors:
+        log: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
