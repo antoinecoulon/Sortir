@@ -90,9 +90,7 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
-        // todo: Peut être remplacé par la méthode getParticipants()->count()
-        $inscriptionCount = $this->eventRepository->findInscriptionCount($event->getId());
-
+        $inscriptionCount = $event->getParticipants()->count();
         $isRegistered = false;
         if ($event->getParticipants()->contains($this->getUser())) {
             $isRegistered = true;
