@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Site;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\UserUploadType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,6 +72,76 @@ final class UserController extends AbstractController
         return $this->render('user/update.html.twig', [
             'title' => 'Modifier l\'Utilisateur',
             'userForm' => $userForm,
+        ]);
+    }
+
+    #[Route('/import/', name: 'import')]
+    public function import(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
+    {
+        if ($this->getUser()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_event');
+            }
+        }
+
+        $form = $this->createForm(UserUploadType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('csvFile')->getData();
+
+            if ($file) {
+                $handle = fopen($file->getPathname(), 'r');
+                $firstLine = fgets($handle);
+
+                if (strpos($firstLine, "\u{FEFF}") === 0) {
+                    $firstLine = substr($firstLine, 3);
+                }
+
+                $handle = fopen($file->getPathname(), 'r');
+                $firstRow = true;
+                while (($data = fgetcsv($handle, 1000, ';')) !== false) {
+                    if ($firstRow) {
+                        $firstRow = false;
+                        continue;
+                    }
+
+                    if (count($data) < 3) {
+                        continue;
+                    }
+
+                    [$pseudo, $email, $password, $name, $firstname, $phone, $site, $roles] = $data;
+                    $user = new User();
+                    $user->setPseudo($pseudo);
+                    $user->setEmail($email);
+                    $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+                    $user->setName($name);
+                    $user->setFirstname($firstname);
+                    $user->setPhone($phone);
+
+                    $siteEntity = $em->getRepository(Site::class)->findOneBy(['name' => $site]);
+                    if (!$siteEntity) {
+                        $this->addFlash('error', "Le site'$site' n'existe pas en base");
+                        continue;
+                    }
+
+                    $user->setSite($siteEntity);
+                    $user->setRoles(explode('|', $roles));
+                    $user->setIsActive(true);
+
+                    $em->persist($user);
+                }
+                fclose($handle);
+                $em->flush();
+
+                $this->addFlash('success', 'Utilisateurs importés avec succès');
+                return $this->redirectToRoute('app_event');
+            }
+        }
+
+        return $this->render('user/import.html.twig', [
+            'form' => $form,
+            'title' => 'Import des utilisateurs',
         ]);
     }
 }
