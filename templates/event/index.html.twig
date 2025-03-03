@@ -32,7 +32,7 @@
                     Date de la sortie
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Clôture
+                    Clôture des inscriptions
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Inscrits / Places
@@ -61,26 +61,35 @@
                     {{ event.startAt | date("d/m/Y H:i") }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.endAt | date("d/m/Y H:i") }}
+                    {{ event.inscriptionLimitAt | date("d/m/Y H:i") }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ inscriptionCount[event.eventId] ?? 0 }} / {{ event.maxParticipant }}
+                    {{ inscriptionCount[event.id] }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
                     {{ event.state }}
                 </td>
                 <td class="px-6 py-4">
-                    <input type="checkbox" {# à gérer dans le controller, mettre 'checked' si current_user id = event_id de 'event_user' // attente connexion feature #} />
+                    {% if isRegisteredById[event.id] %}
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
+                        <svg class="w-2.5 h-2.5 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill="currentColor" d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z"/>
+                            <path fill="#fff" d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"/></svg>
+                            inscrit
+                        </span>
+                    {% endif %}
                 </td>
                 <td class="px-6 py-4">
+
                     <a href="{{ path('app_user_detail', {'userId' : event.organizerId}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{event.organizerName ? event.organizerName : 'Inconnu' }}</a>
+
                 </td>f
                 <td class="px-6 py-4">
-                    <a href="{{ path('app_event_detail', {id: event.eventId}) }}">Afficher</a>
-                    {% if current_user is same as(event.organizerEmail) %}
+                    <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
+                    {% if app.user.id is same as(event.organizer.id) %}
                     <a href="#">Modifier</a>
                     {% endif %}
-                    {% if current_user is same as(event.organizerEmail) or is_granted('ROLE_ADMIN') %}
+                    {% if app.user.id is same as(event.organizer.id) or is_granted('ROLE_ADMIN') %}
                     <a href="#">Annuler</a>
                     {% endif %}
                 </td>
