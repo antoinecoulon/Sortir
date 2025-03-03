@@ -185,7 +185,8 @@ final class EventController extends AbstractController
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "La sortie a bien été annulé");
-
+        return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
+    }
     /**
      * 2003 - S'inscrire à un événement
      * @param Event $event

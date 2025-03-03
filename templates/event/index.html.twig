@@ -80,7 +80,7 @@
                     {% endif %}
                 </td>
                 <td class="px-6 py-4">
-                    <a href="{{ path('app_user_detail', {'userId' : event.organizerId}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{event.organizer ? event.organizer.name: 'Inconnu' }}</a>
+                    <a href="{{ path('app_user_detail', {'userId' : event.organizer.id}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{event.organizer ? event.organizer.name: 'Inconnu' }}</a>
                 </td>f
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
