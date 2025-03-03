@@ -14,4 +14,8 @@ when@test:
         intercept_redirects: false
 
     framework:
-        profiler: { collect: false }
+           only_exceptions: false
+           collect_serializer_data: false   # Désactiver la collecte des données de sérialisation
+           collect_session_data: false     # Désactiver la collecte des données de session
+           collect_request_data: false     # Désactiver la collecte des données des requêtes
+           collect_db_data: false  

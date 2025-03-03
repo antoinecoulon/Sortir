@@ -10,7 +10,6 @@ let locationNameValue = ""
 let addresses = []
 let address = null
 
-
 // EVENTS
 searchInput.addEventListener("input", autocompleteAdresse);
 createAddress.addEventListener("click", sendForm);

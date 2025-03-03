@@ -96,7 +96,8 @@
 </div>
 
     {% block javascripts %}
-        <script src="{{ asset('js/leaflet.js') }}"></script>
+             {{ parent() }}
+        {{ vite_entry_script_tags('leaflet') }}
     {% endblock %}
 
     <script>

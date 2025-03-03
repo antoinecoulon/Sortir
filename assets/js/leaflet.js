@@ -1,3 +1,5 @@
+import "leaflet"
+import 'leaflet/dist/leaflet.css';
 
 document.addEventListener('DOMContentLoaded', () => {
     const icon = L.icon({

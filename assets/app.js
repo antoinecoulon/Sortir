@@ -1,5 +1,3 @@
-import './dark-mode.js';
-import './styles/app.css';
+import './bootstrap.js';
+import './js/dark-mode.js';
 import 'flowbite';
-import 'leaflet';
-import 'leaflet/dist/leaflet.min.css';

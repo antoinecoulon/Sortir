@@ -95,7 +95,8 @@
     </div>
 
     {% block javascripts %}
-        <script src="{{ asset('js/address.js') }}"></script>
+             {{ parent() }}
+        {{ vite_entry_script_tags('address') }}
     {% endblock %}
 
 {% endblock %}
