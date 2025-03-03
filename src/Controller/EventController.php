@@ -19,11 +19,13 @@ final class EventController extends AbstractController
 {
     private readonly EventRepository $eventRepository;
     private readonly EntityManagerInterface $em;
+    private readonly \DateTimeImmutable $now;
 
     public function __construct(EventRepository $eventRepository, EntityManagerInterface $em)
     {
         $this->eventRepository = $eventRepository;
         $this->em = $em;
+        $this->now = new \DateTimeImmutable();
     }
 
     #[Route(['/', '/event'], name: 'app_event', methods: ['GET'])]
@@ -39,9 +41,11 @@ final class EventController extends AbstractController
 
         // On récupère la liste des événements
         $events = $this->eventRepository->findAll();
+
         // On initialise nos variables
         $inscriptionsCountById = [];
         $isRegisteredById = [];
+
         // Pour chaque événement...
         foreach ($events as $event) {
             // On récupère l'ID
@@ -53,6 +57,10 @@ final class EventController extends AbstractController
                 $isRegisteredById[$eventId] = true;
             } else {
                 $isRegisteredById[$eventId] = false;
+            }
+            // On teste si la date de clotûre des inscriptions est passée
+            if ($event->getInscriptionLimitAt() <= $this->now) {
+                $event->setState('CLOSED');
             }
         }
 
@@ -96,10 +104,18 @@ final class EventController extends AbstractController
             $isRegistered = true;
         }
 
+        // Calculer la date d'inscription limite
+        if ($event->getInscriptionLimitAt() >= $this->now) {
+            $limitIsPassed = false;
+        } else {
+            $limitIsPassed = true;
+        }
+
         return $this->render('event/detail.html.twig', [
             'event' => $event,
             'inscriptionCount' => $inscriptionCount,
             'isRegistered' => $isRegistered,
+            'limitIsPassed' => $limitIsPassed,
         ]);
     }
 

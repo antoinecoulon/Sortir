@@ -26,21 +26,32 @@
                 {% set leftHours = duree.h %}
                 <p class="mb-3 font-normal dark:text-gray-200">du {{ event.startAt | date('d-m-Y à H:i') }} au {{ event.endAt | date('d-m-Y à H:i') }}</p>
                 <p class="mb-3 font-normal dark:text-gray-200">({{ leftDays }} jours, {{ leftHours }} heures restantes)</p>
-                <p class="mb-3 font-normal dark:text-gray-200">S'inscrire avant le {{ event.inscriptionLimitAt | date('d-m-Y à H:i') }}</p>
+
+                {% if limitIsPassed == true %}
+                    <p class="mb-3 font-normal text-red-500 dark:text-red-500">Inscriptions fermées</p>
+                {% else %}
+                    <p class="mb-3 font-normal dark:text-gray-200">S'inscrire avant le {{ event.inscriptionLimitAt | date('d-m-Y à H:i') }}</p>
+                {% endif %}
                 <p class="mb-3 font-normal dark:text-gray-200">{{ inscriptionCount }} inscrits / {{ event.maxParticipant }} places disponibles</p>
-                {% if inscriptionCount < event.maxParticipant and app.user.id != event.organizer.id and isRegistered == false %}
+                {% if isRegistered %}
+                    <p class="mb-3 font-normal dark:text-green-500">Vous êtes inscrit à cet événement !</p>
+                {% endif %}
+                {% if app.user.id != event.organizer.id and isRegistered == false %}
+                    {% if inscriptionCount < event.maxParticipant and limitIsPassed == false %}
                     <a href="{{ path('app_event_register', {id: event.id}) }}">
                         <button type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                             S'inscrire
                         </button>
                     </a>
-                {% elseif inscriptionCount >= event.maxParticipant %}
+                    {% endif %}
+                {% endif %}
+                {% if inscriptionCount >= event.maxParticipant %}
                     <p class="mb-3 font-normal text-red-700 dark:text-red-400">
                         <svg class="w-6 h-6 text-red-800 dark:text-red inline-block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8 10V7a4 4 0 1 1 8 0v3h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1Zm2-3a2 2 0 1 1 4 0v3h-4V7Zm2 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"/></svg>
                         L'événement est complet !
                     </p>
                 {% endif %}
-                {% if isRegistered == true %}
+                {% if isRegistered == true and event.startAt > "now" %}
                     <a href="{{ path('app_event_unregister', {id: event.id}) }}">
                         <button type="button" class="text-gray-900 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                             Se désister

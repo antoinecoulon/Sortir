@@ -32,7 +32,7 @@
                     Date de la sortie
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Clôture
+                    Clôture des inscriptions
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Inscrits / Places
@@ -61,7 +61,7 @@
                     {{ event.startAt | date("d/m/Y H:i") }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.endAt | date("d/m/Y H:i") }}
+                    {{ event.inscriptionLimitAt | date("d/m/Y H:i") }}
                 </td>
                 <td class="px-6 py-4">
                     {{ inscriptionCount[event.id] }} / {{ event.maxParticipant }}
