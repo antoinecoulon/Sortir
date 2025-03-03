@@ -1,5 +1,9 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
+    form:
+        csrf_protection:
+            enabled: true
+            field_name: '_csrf_token'
     secret: '%env(APP_SECRET)%'
     annotations: false
     http_method_override: false
