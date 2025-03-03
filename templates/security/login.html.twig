@@ -14,11 +14,11 @@
             </div>
         {% endif %}
         <div class="container h-full max-w-lg mx-auto flex flex-col">
-            <h1 class="text-center dark:text-white">Connectez-vous s'il vous plaît</h1>
-            <label for="email_or_pseudo">Email ou Pseudo : </label>
-            <input type="text" value="{{ last_username }}" name="email_or_pseudo" id="email_or_pseudo" class="form-control" autocomplete="email" required autofocus>
-            <label for="password"> Mot de passe : </label>
-            <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+            <h1 class="text-center dark:text-gray-300">Connectez-vous s'il vous plaît</h1>
+            <label for="email_or_pseudo" class="dark:text-gray-300">Email ou Pseudo : </label>
+            <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ last_username }}" name="email_or_pseudo" id="email_or_pseudo" class="form-control" autocomplete="email" required autofocus>
+            <label for="password" class="dark:text-gray-300"> Mot de passe : </label>
+            <input type="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="_password" id="password" class="form-control" autocomplete="current-password" required>
 
             <input type="hidden" name="_csrf_token"
                    value="{{ csrf_token('authenticate') }}"
@@ -27,12 +27,20 @@
 
             <div class="checkbox mb-3">
                 <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
+                <label for="_remember_me" class="dark:text-gray-300">Remember me</label>
             </div>
 
             <div class="flex flex-row justify-center items-center gap-5 ">
                 <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                     Connexion
+                </button>
+            </div>
+            <div class="flex flex-row justify-center items-center gap-5 ">
+                <div class="dark:text-gray-300">Si vous ne possédez pas de compte</div>
+            </div>
+            <div class="flex flex-row justify-center items-center gap-5 ">
+                <button type="button" class="text-white bg-gradient-to-br from-cyan-500 to-lime-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                    <a href="{{ path('app_register') }}">Créer un compte</a>
                 </button>
             </div>
         </div>
