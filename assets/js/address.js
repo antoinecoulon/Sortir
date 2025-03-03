@@ -2,17 +2,21 @@ const searchInput = document.getElementById('address')
 const listTarget = document.getElementById('addressList')
 const createAddress = document.getElementById('createAddress')
 const locationNameInput = document.getElementById('location-name-input')
+const addressForm = document.getElementById('addressForm')
+const modal = document.querySelector('[data-modal-toggle="location-modal"]');
+const selectLocation = document.getElementById("event_location")
 
 let locationNameValue = ""
 let addresses = []
 let address = null
 
 
+// EVENTS
 searchInput.addEventListener("input", autocompleteAdresse);
 createAddress.addEventListener("click", sendForm);
-locationNameInput.addEventListener("input", (evt => {
-    locationNameValue = evt.target.value
-}))
+locationNameInput.addEventListener("input", (evt => locationNameValue = evt.target.value))
+
+addressForm.addEventListener("submit", evt => evt.preventDefault())
 
 
 function autocompleteAdresse(evt) {
@@ -51,7 +55,7 @@ function addClickListener(length) {
             const addressIdx = evt.target.id.split("-")[1]
             address = addresses[addressIdx].properties
             searchInput.value = address.label
-            document.getElementById("data-address").innerHTML = `<pre>${JSON.stringify(address, null, 2)}</pre> T LA ?`
+            // DEBUG document.getElementById("data-address").innerHTML = `<pre>${JSON.stringify(address, null, 2)}</pre>`
             addresses = []
             listTarget.innerHTML = renderList()
         })
@@ -60,9 +64,8 @@ function addClickListener(length) {
 }
 
 
-
 async function sendForm() {
-    if (address && locationNameValue) {
+    if (address && locationNameValue && addressForm.checkValidity()) {
         const location = {
             name: locationNameValue,
             street: address.street,
@@ -82,12 +85,16 @@ async function sendForm() {
         }
         try {
             const response = await fetch('/location/create', body)
-
             const data = await response.json()
-            console.log(data)
+            let newLocationOption = document.createElement('option');
+            newLocationOption.value = data?.locationId;
+            newLocationOption.textContent = data?.locationName;
+            selectLocation.appendChild(newLocationOption)
+            selectLocation.value = newLocationOption.value
+            modal.click() // close modal
         } catch (error) {
             console.error(error)
         }
     }
-    console.log("form envoyé !", address)
 }
+

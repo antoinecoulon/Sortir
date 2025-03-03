@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -93,6 +94,9 @@ class Event
 
     #[ORM\Column]
     private ?string $state = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $cancelMessage = null;
 
     public function __construct()
     {
@@ -287,5 +291,17 @@ class Event
         } else {
             $this->setState($this::CREATED);
         }
+    }
+
+    public function getCancelMessage(): ?string
+    {
+        return $this->cancelMessage;
+    }
+
+    public function setCancelMessage(?string $cancelMessage): static
+    {
+        $this->cancelMessage = $cancelMessage;
+
+        return $this;
     }
 }

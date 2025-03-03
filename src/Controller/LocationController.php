@@ -35,29 +35,25 @@ final class LocationController extends AbstractController
     public function create(Request $request, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $cleanData = [];
-        foreach($data as $key=>$value) {
-            $cleanData[$key] = htmlspecialchars($value);
-        }
+
         $location = new Location();
-        $location->setName($cleanData['name'] ?? '');
-        $location->setStreet($cleanData['street'] ?? '');
-        $location->setCp($cleanData['cp'] ?? '');
-        $location->setStreetNumber($cleanData['streetNumber'] ?? null);
-        $location->setCity($cleanData['city'] ?? '');
-        $location->setLatitude($cleanData['latitude'] ?? null);
-        $location->setLongitude($cleanData['longitude'] ?? null);
+        $location->setName($data['name'] ?? '');
+        $location->setStreet($data['street'] ?? '');
+        $location->setCp($data['cp'] ?? '');
+        $location->setStreetNumber((int)$data['streetNumber'] ?? null);
+        $location->setCity($data['city'] ?? '');
+        $location->setLatitude($data['latitude'] ?? null);
+        $location->setLongitude($data['longitude'] ?? null);
 
         $errors = $validator->validate($location);
-        dump($location);
         if(count($errors) > 0) {
             return new JsonResponse(['message' => 'Le formulaire n\'est pas valide'], 400);
         }
 
         $this->em->persist($location);
         $this->em->flush();
-        $this->addFlash('success', "Le lieu {$location->getName()} a bien été crée");
-
-        return new JsonResponse(['message' => 'success']);
+        $locationId = $location->getId();
+        $locationName = $location->getName();
+        return new JsonResponse(['message' => 'success', 'locationId' => $locationId, 'locationName' =>$locationName ]);
     }
 }
