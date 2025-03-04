@@ -35,7 +35,7 @@ final class EventController extends AbstractController
         $this->now = new \DateTimeImmutable();
     }
 
-    #[Route(['/', '/event'], name: 'app_event', methods: ['GET'])]
+    #[Route('/', name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
         // On récupère la liste des événements
@@ -143,7 +143,7 @@ final class EventController extends AbstractController
         $readonly =  $this->isGranted("ROLE_ADMIN") && !$this->eventService->isEventCreator($event, $this->getUser());
         $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false, 'display_isPrivate' => false, 'readonly' =>  $readonly]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $this->eventService->isEventCreator($event, $this->getUser())) {
             if ($form->get('image')->getData()) {
                 $file = $form->get('image')->getData();
                 $name = $uploadFile->upload($file, $event->getName(), $this->getParameter('kernel.project_dir') . '/public/uploads');

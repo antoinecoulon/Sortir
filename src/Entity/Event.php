@@ -34,7 +34,7 @@ class Event
         self::CREATED => 'Créé',
         self::OPENED => 'Ouvert',
         self::CLOSED => 'Fermé',
-        self::PROCESSING => 'En encours',
+        self::PROCESSING => 'En cours',
         self::FINISHED => 'Terminé',
         self::CANCELLED => 'Annulé',
     ];
