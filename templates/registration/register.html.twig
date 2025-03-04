@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{{ parent() }} - {{ title }}{% endblock %}
 
 {% block body %}
     <div class="container h-full max-w-lg mx-auto flex flex-col">
@@ -14,6 +14,7 @@
         {{ form_row(userForm.firstname) }}
         {{ form_row(userForm.phone) }}
         {{ form_row(userForm.site) }}
+        {{ form_row(userForm.profilePicture) }}
 
 
         <div class="flex flex-row justify-center items-center gap-5 ">

@@ -46,6 +46,15 @@ class RegistrationController extends AbstractController
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
             $user->setRoles(['ROLE_USER']);
             $user->setIsActive(true);
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $user->setIsVerified(true);
+
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Utilisateur créé avec succès');
+                return $this->redirectToRoute('app_user_import');
+            }
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'Un mail de confirmation vient de vous être envoyé');
@@ -88,7 +97,7 @@ class RegistrationController extends AbstractController
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
-            $this->emailVerifier->handleEmailConfirmation($request, $user->getId(), $user->getEmail());
+            $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
 

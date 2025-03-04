@@ -2,11 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Site;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\UserUploadType;
+use App\Helper\UploadFile;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -44,7 +49,7 @@ final class UserController extends AbstractController
         ]);
     }
     #[Route('/update/', name: 'update')]
-    public function update(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
+    public function update(Request $request, UploadFile $uploadFile, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
 
@@ -61,6 +66,18 @@ final class UserController extends AbstractController
             if (!empty($plainPassword)) {
                 $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
             }
+
+            // Upload profile picture
+            try {
+                if ($userForm->get('profilePicture')->getData()) {
+                    $file = $userForm->get('profilePicture')->getData();
+                    $name = $uploadFile->upload($file, $user->getPseudo(), $this->getParameter('kernel.project_dir') . '/public/uploads');
+                    $user->setPhoto($name);
+                }
+            } catch (FileException $e) {
+                $userForm->addError(new FormError($e->getMessage()));
+            }
+
             $em->flush();
             $this->addFlash('success', 'Utilisateur modifié avec succès');
 
@@ -70,6 +87,84 @@ final class UserController extends AbstractController
         return $this->render('user/update.html.twig', [
             'title' => 'Modifier l\'Utilisateur',
             'userForm' => $userForm,
+        ]);
+    }
+
+    #[Route('/import/', name: 'import')]
+    public function import(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
+    {
+        if ($this->getUser()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_event');
+            }
+        }
+
+        $form = $this->createForm(UserUploadType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('csvFile')->getData();
+
+            if ($file) {
+                $handle = fopen($file->getPathname(), 'r');
+                $firstLine = fgets($handle);
+
+                if (str_starts_with($firstLine, "\u{FEFF}")) {
+                    $firstLine = substr($firstLine, 3);
+                }
+
+
+                $firstRow = true;
+                while (($data = fgetcsv($handle, 1000, ';')) !== false) {
+
+                    if (count($data) < 8) {
+                        continue;
+                    }
+
+                    [$pseudo, $email, $password, $name, $firstname, $phone, $site, $roles] = $data;
+
+                    try {
+                        $user = new User();
+                        $user->setPseudo($pseudo);
+                        $user->setEmail($email);
+
+                        if (strlen($password) < 5) {
+                            $this->addFlash('error', "Mot de passe trop court pour $pseudo");
+                            continue;
+                        }
+
+                        $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+                        $user->setName($name);
+                        $user->setFirstname($firstname);
+                        $user->setPhone($phone);
+
+                        $siteEntity = $em->getRepository(Site::class)->findOneBy(['name' => $site]);
+                        if (!$siteEntity) {
+                            $this->addFlash('error', "Le site'$site' n'existe pas en base");
+                            continue;
+                        }
+
+                        $user->setSite($siteEntity);
+                        $user->setRoles(explode('|', $roles));
+                        $user->setIsActive(true);
+                        $user->setIsVerified(true);
+
+                        $em->persist($user);
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', "Erreur lors de la création de l'utilisateur $pseudo : " . $e->getMessage());
+                        continue;
+                    }
+                }
+                    fclose($handle);
+                    $em->flush();
+                    $this->addFlash('success', 'Utilisateurs importés avec succès');
+                    return $this->redirectToRoute('app_event');
+                }
+            }
+
+        return $this->render('user/import.html.twig', [
+            'form' => $form,
+            'title' => 'Import des utilisateurs',
         ]);
     }
 }
