@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{{ parent() }} - {{ title }}{% endblock %}
 
 {% block body %}
     <div class="container h-full max-w-lg mx-auto flex flex-col">

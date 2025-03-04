@@ -68,6 +68,10 @@ class CustomAuthenticator extends AbstractAuthenticator
                if (!$user) {
                    throw new UserNotFoundException('Utilisateur non trouvé');
                }
+
+               if (!$user->isVerified()) {
+                   throw new CustomUserMessageAuthenticationException('Veuillez vérifier votre adresse email avant de vous connecter.');
+               }
                return $user;
            }),
             new PasswordCredentials($password),
@@ -99,6 +103,14 @@ class CustomAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
+        // Vérifiez si l'exception est liée à l'email non vérifié
+        if ($exception instanceof CustomUserMessageAuthenticationException &&
+            $exception->getMessage() === 'Veuillez vérifier votre adresse email avant de vous connecter.') {
+            $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
+            return new RedirectResponse($this->urlGenerator->generate('app_login'));
+        }
+
+
         $request->getSession()->getFlashBag()->add('error', 'Identifiants incorrects.');
 
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
