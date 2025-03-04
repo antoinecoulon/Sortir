@@ -44,19 +44,23 @@ final class EventController extends AbstractController
 //            return $this->redirectToRoute('app_login');
 //        }
 
-        //dump($this->getUser());
         //***** La gestion des filtres ******
-        $filters = $request->query->all(); // récupère tout ce qu'il y a dans le GET
+        // Récupére tout ce qui est envoyé en GET
+        $filters = $request->query->all();
 
-        // regarder si la case est cochée
+        // Vérifie si la checkbox "Je suis organisateur/trice" est cochée :
         if (isset($filters['organizer'])){
             $filters['organizer'] = $this->getUser();
+        }
+        // Vérifie si la checkbox "Je suis inscrit.e" est cochée :
+        if (isset($filters['registered'])) {
+            $filters['registered'] = $this->getUser();
         }
 
         // Search bar
         $events = $this->eventRepository->filtersFindAllSite($filters);
 
-        // Liste déroulante sur tous les sites
+        // Liste déroulante : sites
         $siteRepository = $this->em->getRepository(Site::class);
         $sites = $siteRepository->findAll();
 

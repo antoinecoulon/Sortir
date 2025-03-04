@@ -4,42 +4,55 @@
 
 {% block body %}
     <div class="flex justify-between items-center">
-    <div>Page d'accueil</div>
 
     <div>
         <h2>Filtrer les sorties</h2>
 
         <form method="get" action="{{ path("app_event") }}">
-            <!-- Search avec l'icône -->
+            <div class="flex gap-16">
+                <section class="grid grid-cols-2 gap-3 items-center">
+                    <!-- Search avec l'icône -->
+                    <label for="testLabel2" class="text-right">Le nom de la sortie contient :</label>
+                    <div class="relative w-full">
+                        <input type="search" id="testLabel2" name="search"
+                                   class="border p-1 pl-10 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Search"/>
+                        <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2"
+                                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                        </svg>
+                    </div>
 
-            <label for="testLabel2" class="text-right">Le nom de la sortie contient :</label>
-            <div class="relative w-full">
-                <input type="search" id="testLabel2" name="search"
-                           class="border p-1 pl-10 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="Search"/>
-                <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2"
-                         aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-                </svg>
+                    <!-- Site avec la liste déroulante -->
+                    <label for="siteList" class="text-right">Site :</label>
+                    <select name="site" id="siteList" class="border p-1 rounded w-full">
+                        {% for site in sites %}
+                            <option value="{{ site.id }}">{{ site.name }}</option>
+                        {% endfor %}
+                    </select>
+                </section>
+
+                <section class="space-y-2">
+
+                    <!-- Checkbox -->
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="outingOrganizer" name="organizer"/>
+                        <label for="outingOrganizer" class="inline">Sorties dont je suis l'organisateur/trice</label>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="outingRegistered" name="registered"/>
+                        <label for="outingRegistered" class="inline">Sorties auxquelles je suis inscrit/e</label>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl#}
+                    focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm#}
+                    px-5 py-2.5 text-center me-2 mb-2">Rechercher
+                    </button>
+
+                </section>
             </div>
-
-            <!-- Site avec la liste déroulante -->
-
-            <label for="siteList" class="text-right">Site :</label>
-            <select name="site" id="siteList" class="border p-1 rounded w-full">
-                {% for site in sites %}
-                    <option value="{{ site.id }}">{{ site.name }}</option>
-                {% endfor %}
-            </select>
-
-            <div class="flex items-center space-x-2">
-                <input type="checkbox" id="outingOrganizer" name="organizer"/>
-                <label for="outingOrganizer" class="inline">Sorties dont je suis l'organisateur/trice</label>
-            </div>
-
-            <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl#}
-    focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm#}
-    px-5 py-2.5 text-center me-2 mb-2">Rechercher</button>
         </form>
 
         {#        <form>#}

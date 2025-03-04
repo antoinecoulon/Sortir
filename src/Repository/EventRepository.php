@@ -33,6 +33,10 @@ class EventRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('event.organizer = :organizer')
                 ->setParameter('organizer', $filters['organizer']);
         }
+        if (isset($filters['registered'])) {
+            $queryBuilder->andWhere('event.participants = :registered')
+                ->setParameter('registered', $filters['registered']);
+        }
         return $queryBuilder->getQuery()->getResult();
     }
 }
