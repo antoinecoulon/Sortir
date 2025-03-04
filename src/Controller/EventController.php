@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Form\EventType;
+use App\Helper\UploadFile;
 use App\Repository\EventRepository;
 use App\Service\EventService;
 use DateTime;
@@ -78,13 +79,18 @@ final class EventController extends AbstractController
     }
 
     #[Route('/event/create', name: 'app_event_create')]
-    public function create(Request $request): Response
+    public function create(Request $request, UploadFile $uploadFile): Response
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $event->setOrganizer($this->getUser());
+            if ($form->get('image')->getData()) {
+                $file = $form->get('image')->getData();
+                $name = $uploadFile->upload($file, $event->getName(), $this->getParameter('kernel.project_dir') . '/public/uploads');
+                $event->setPhoto($name);
+            }
             $this->em->persist($event);
             $this->em->flush();
             $this->addFlash('success', "La sortie {$event->getName()} a bien été créée");
@@ -126,7 +132,7 @@ final class EventController extends AbstractController
     }
 
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
-    public function update(Event $event, Request $request): Response
+    public function update(Event $event, Request $request, UploadFile $uploadFile): Response
     {
         if (!$this->eventService->isEventCreator($event, $this->getUser())) {
             throw $this->createAccessDeniedException("Modification interdite");
@@ -134,6 +140,11 @@ final class EventController extends AbstractController
         $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('image')->getData()) {
+                $file = $form->get('image')->getData();
+                $name = $uploadFile->upload($file, $event->getName(), $this->getParameter('kernel.project_dir') . '/public/uploads');
+                $event->setPhoto($name);
+            }
             $this->em->persist($event);
             $this->em->flush();
             $this->addFlash('success', "La sortie {$event->getName()} a bien été modifié");
