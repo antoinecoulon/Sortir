@@ -38,14 +38,6 @@ final class EventController extends AbstractController
     #[Route(['/', '/event'], name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
-        // On teste si un utilisateur est connecté
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $this->addFlash('success', "Bienvenue {$this->getUser()->getName()}");
-        } else {
-            $this->addFlash('error', 'Vous avez tenté d\'accéder à une page à laquelle vous n\'avez pas accès. Veuillez vous identifier.');
-            return $this->redirectToRoute('app_login');
-        }
-
         // On récupère la liste des événements
         $events = $this->eventRepository->findAll();
 

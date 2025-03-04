@@ -21,46 +21,37 @@
                        aria-current="page">Accueil</a>
                 </li>
                 {% if is_granted('IS_AUTHENTICATED') %}
-                <li>
-                    <a href="{{ path('app_user_detail', {'userId' : app.user.id}) }}"
-                       class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                       aria-current="page">Profil</a>
-                </li>
-                <li>
-                    <a href="{{ path('app_group') }}"
-                       class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                       aria-current="page">Groupes</a>
-                </li>
-                <li>
-                    <a href="{{ path('app_logout') }}"
-                       class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                       aria-current="page">Déconnexion</a>
-                </li>
-            </ul>
-        </div>
-        {% else %}
-
-            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    <li>
+                        <a href="{{ path('app_user_detail', {'userId' : app.user.id}) }}"
+                           class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+                           aria-current="page">Profil</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_group') }}"
+                           class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+                           aria-current="page">Groupes</a>
+                    </li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li>
+                            <a href="{{ path('app_user_import') }}"
+                               class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+                               aria-current="page">Import</a>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a href="{{ path('app_logout') }}"
+                           class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+                           aria-current="page">Déconnexion</a>
+                    </li>
+                {% else %}
                     <li>
                         <a href="{{ path('app_login') }}"
                            class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
                            aria-current="page">Connexion</a>
                     </li>
-                </ul>
-            </div>
-        {% endif %}
-        {% if is_granted('ROLE_ADMIN') %}
-            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                    <li>
-                        <a href="{{ path('app_user_import') }}"
-                           class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                           aria-current="page">Import</a>
-                    </li>
-                </ul>
-            </div>
-        {% endif %}
+                {% endif %}
+            </ul>
+        </div>
         <div style="height: 40px; width: 40px">
             <button id="theme-toggle" type="button"
                     class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">

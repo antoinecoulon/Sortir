@@ -72,11 +72,12 @@ class EventType extends AbstractType
                 'class' => Location::class,
                 'choice_label' => 'name',
                 'disabled' => $isReadOnly
+            ])
             ->add('image', FileType::class, [
                 'label' => 'Image',
                 'required' => false,
                 'mapped' => false,
-                'disabled' => $isReadOnly
+                'disabled' => $isReadOnly,
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
@@ -85,10 +86,9 @@ class EventType extends AbstractType
                         'mimeTypesMessage' => 'Please upload a valid image file (.jpeg, .jpg, .png)',
                     ])
                 ]
-            ])
-        ;
+            ]);
 
-        if($options['display_isPublish']) {
+        if ($options['display_isPublish']) {
             $builder->add('isPublished', CheckboxType::class, [
                 'label' => 'Publié ?',
                 'required' => false,
@@ -96,7 +96,7 @@ class EventType extends AbstractType
             ]);
         }
 
-        if($options['display_isPrivate']) {
+        if ($options['display_isPrivate']) {
             $builder->add('isPrivate', CheckboxType::class, [
                 'label' => 'Privé ?',
                 'required' => false,

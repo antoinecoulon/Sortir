@@ -40,7 +40,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
            $user->setEmail($team. '@campus-eni.fr');
            $user->setRoles(['ROLE_ADMIN']);
-           $user->setPhoto($faker->image());
            $user->setIsActive(true);
            $user->setIsVerified(true);
 

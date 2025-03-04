@@ -1,0 +1,6 @@
+pseudo;email;password;name;firstname;phone;site;roles
+tyty;tyty@campus-eni.fr;password;Floris;tyty;0102030405;Niort;ROLE_ADMIN
+riri;riri@campus-eni.fr;passworduser;Duck;Riri;0204060810;Saint-Herblain;ROLE_USER
+fifi;fifi@campus-eni.fr;passwordfifi;Duck;Fifi;0102030405;Quimper;ROLE_USER
+loulou;loulou@campus-eni.fr;passwordloulou;Duck;Loulou;0102030405;La Roche sur Yon;ROLE_USER
+
