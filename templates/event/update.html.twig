@@ -3,7 +3,16 @@
 {% block body %}
 
     <div class="container h-full max-w-lg mx-auto flex flex-col gap-5">
-        <h1 class="text-center dark:text-white">{{ isPublished ? 'Evènement publié' : 'Evènement non publié' }}</h1>
+        <h1 class="text-center dark:text-white">Evenement {{ event.name }}
+            <div >Visibilité : <span class="{{ event.isPrivate ? 'text-red-500' : 'text-green-500' }}">{{  event.isPrivate ? 'privé' : 'publique' }}</span></div>
+            <div >Publication : <span class="{{  event.isPublished ? 'text-green-500' : 'text-red-500' }}">{{  event.isPublished ? 'En ligne' : 'Brouillon' }}</span></div>
+            <div >Statut : <span class="{{  event.isPrivate ? 'text-red-500' : 'text-green-500' }}">{{  event.displayStateLabel() }}</span></div>
+
+         {% if readonly %}
+        <div class="dark:text-white text-center">
+            Vous avez accès à cette page en tant qu'admin, aucune modification possible mais vous pouvez annuler l'évenement
+        </div>
+        {% endif %}
         <div class="overflow-y-auto p-8">
             {{ form_start(form) }}
 
@@ -34,33 +43,33 @@
 
         <div class="flex flex-row justify-center items-center gap-5 ">
             {% if canCancel %}
-{#                <a href="{{ path('app_event_cancel', {'id' : id} ) }}">#}
                     <button type="button" data-modal-target="cancel-message-modal" data-modal-toggle="cancel-message-modal"
                             class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         Annuler l'évènement
                     </button>
-{#                </a>#}
             {% endif %}
-            {% if not isPublished %}
-                <a href="{{ path('app_event_delete', {'id' : id} ) }}">
+            {% if not  event.isPublished and not readonly %}
+                <a href="{{ path('app_event_delete', {'id' :  event.id} ) }}">
                     <button type="button"
                             class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         Supprimer l'évènement
                     </button>
                 </a>
             {% endif %}
-            {% if not isPublished %}
-                <a href="{{ path('app_event_publish', {'id' : id} ) }}">
+            {% if not  event.isPublished and not readonly %}
+                <a href="{{ path('app_event_publish', {'id' :  event.id} ) }}">
                     <button type="button"
                             class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         Publier l'évènement
                     </button>
                 </a>
             {% endif %}
+            {% if not readonly  %}
             <button type="button"
                     class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Enregistrer les modifications
             </button>
+            {% endif %}
         </div>
         {{ form_end(form) }}
     </div>
@@ -107,7 +116,7 @@
     <script>
         const sendFormBtn = document.getElementById('sendForm');
         const cancelMessageInput = document.getElementById("cancelMessage");
-        const eventPublishUrl = "{{ path('app_event_cancel', {'id' : id}) }}"
+        const eventPublishUrl = "{{ path('app_event_cancel', {'id' :  event.id}) }}"
         let cancelMessageValue = null
 
         sendFormBtn.addEventListener('click', evt => {
@@ -118,7 +127,6 @@
 
 
         function sendForm() {
-            console.log(cancelMessageValue)
             if(cancelMessageValue) {
                 window.location.href = `${eventPublishUrl}?cancelMessage=${encodeURIComponent(cancelMessageValue)}`;
             }

@@ -130,10 +130,11 @@ final class EventController extends AbstractController
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
     public function update(Event $event, Request $request): Response
     {
-        if (!$this->eventService->isEventCreator($event, $this->getUser())) {
+        if (!$this->eventService->isEventCreator($event, $this->getUser()) && !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Modification interdite");
         }
-        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false]);
+        $readonly =  $this->isGranted("ROLE_ADMIN") && !$this->eventService->isEventCreator($event, $this->getUser());
+        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false, 'display_isPrivate' => false, 'readonly' =>  $readonly]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($event);
@@ -143,9 +144,9 @@ final class EventController extends AbstractController
         }
 
         return $this->render('event/update.html.twig', [
+            'event' =>$event,
+            'readonly' =>  $readonly,
             'form' => $form,
-            'isPublished' => $event->isPublished(),
-            'id' => $event->getId(),
             'canCancel' => $this->eventService->canCancel($event)
         ]);
     }
@@ -153,7 +154,7 @@ final class EventController extends AbstractController
     #[Route('/event/delete/{id}', name: 'app_event_delete', requirements: ['id' => '\d+'])]
     public function delete(Event $event): Response
     {
-        if (!$this->eventService->isEventCreator($event, $this->getUser()) || !$this->isGranted("ROLE_ADMIN")) {
+        if (!$this->eventService->isEventCreator($event, $this->getUser()) && !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Annulation interdite");
         }
         $this->em->remove($event);
@@ -179,7 +180,7 @@ final class EventController extends AbstractController
     #[Route('/event/cancel/{id}', name: 'app_event_cancel', requirements: ['id' => '\d+'])]
     public function cancel(Event $event, Request $request): Response
     {
-        if (!$this->eventService->isEventCreator($event, $this->getUser()) || !$this->isGranted("ROLE_ADMIN")) {
+        if (!$this->eventService->isEventCreator($event, $this->getUser()) && !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Annulation interdite");
         }
         $cancelMessage = $request->query->get("cancelMessage") || "Motif inconnu";

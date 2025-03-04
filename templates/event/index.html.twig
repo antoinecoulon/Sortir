@@ -68,7 +68,7 @@
                     {{ inscriptionCount[event.id] }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.state }}
+                    {{ event.displayStateLabel }}
                 </td>
                 <td class="px-6 py-4">
                     {% if isRegisteredById[event.id] %}
@@ -86,11 +86,11 @@
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
                     {% if app.user.id is same as(event.organizer.id) %}
-                    <a href="#">Modifier</a>
+                    <a href="{{ path('app_event_update', {id: event.id}) }}">Modifier</a>
                     {% endif %}
-                    {% if app.user.id is same as(event.organizer.id) or is_granted('ROLE_ADMIN') %}
-                    <a href="#">Annuler</a>
-                    {% endif %}
+{#                    {% if app.user.id is same as(event.organizer.id) or is_granted('ROLE_ADMIN') %}#}
+{#                    <a href="#">Annuler</a>#}
+{#                    {% endif %}#}
                 </td>
             </tr>
             {% endfor %}

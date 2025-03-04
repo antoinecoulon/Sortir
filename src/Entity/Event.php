@@ -30,6 +30,15 @@ class Event
         self::CANCELLED
     ];
 
+    private const STATE_LABELS = [
+        self::CREATED => 'Créé',
+        self::OPENED => 'Ouvert',
+        self::CLOSED => 'Fermé',
+        self::PROCESSING => 'En encours',
+        self::FINISHED => 'Terminé',
+        self::CANCELLED => 'Annulé',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -333,5 +342,10 @@ class Event
         $this->isPrivate = $isPrivate;
 
         return $this;
+    }
+
+    public function displayStateLabel(): string
+    {
+        return self::STATE_LABELS[$this->getState()] ?? 'Inconnu';
     }
 }
