@@ -167,4 +167,20 @@ final class UserController extends AbstractController
             'title' => 'Import des utilisateurs',
         ]);
     }
+
+    #[Route('/list', name: 'list')]
+    public function list(UserRepository $userRepository): Response
+    {
+        if ($this->getUser()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_event');
+            }
+        }
+        $users = $userRepository->findAll();
+
+        return $this->render('user/list.html.twig', [
+            'users' => $users,
+            'title' => 'Liste des utilisateurs',
+        ]);
+    }
 }
