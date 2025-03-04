@@ -9,11 +9,13 @@ use App\Repository\SiteRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Optional;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
@@ -68,11 +70,22 @@ class UserType extends AbstractType
             ->add('phone', TextType::class,[
                 'label' => 'Téléphone',
             ])
-            //->add('photo')
-
             ->add('site', EntityType::class, [
                 'class' => Site::class,
                 'choice_label' => 'name',
+            ])
+            ->add('profilePicture', FileType::class, [
+                'label' => 'Image',
+                'required' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'maxSizeMessage' => 'Image too large',
+                        'mimeTypes' => ['image/jpeg', 'image/jpg', 'image/png'],
+                        'mimeTypesMessage' => 'Please upload a valid image file (.jpeg, .jpg, .png)',
+                    ])
+                ],
             ])
         ;
     }
