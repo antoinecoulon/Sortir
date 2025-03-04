@@ -94,50 +94,58 @@ final class UserController extends AbstractController
                 $handle = fopen($file->getPathname(), 'r');
                 $firstLine = fgets($handle);
 
-                if (strpos($firstLine, "\u{FEFF}") === 0) {
+                if (str_starts_with($firstLine, "\u{FEFF}")) {
                     $firstLine = substr($firstLine, 3);
                 }
 
-                $handle = fopen($file->getPathname(), 'r');
+
                 $firstRow = true;
                 while (($data = fgetcsv($handle, 1000, ';')) !== false) {
-                    if ($firstRow) {
-                        $firstRow = false;
-                        continue;
-                    }
 
-                    if (count($data) < 3) {
+                    if (count($data) < 8) {
                         continue;
                     }
 
                     [$pseudo, $email, $password, $name, $firstname, $phone, $site, $roles] = $data;
-                    $user = new User();
-                    $user->setPseudo($pseudo);
-                    $user->setEmail($email);
-                    $user->setPassword($userPasswordHasher->hashPassword($user, $password));
-                    $user->setName($name);
-                    $user->setFirstname($firstname);
-                    $user->setPhone($phone);
 
-                    $siteEntity = $em->getRepository(Site::class)->findOneBy(['name' => $site]);
-                    if (!$siteEntity) {
-                        $this->addFlash('error', "Le site'$site' n'existe pas en base");
+                    try {
+                        $user = new User();
+                        $user->setPseudo($pseudo);
+                        $user->setEmail($email);
+
+                        if (strlen($password) < 5) {
+                            $this->addFlash('error', "Mot de passe trop court pour $pseudo");
+                            continue;
+                        }
+
+                        $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+                        $user->setName($name);
+                        $user->setFirstname($firstname);
+                        $user->setPhone($phone);
+
+                        $siteEntity = $em->getRepository(Site::class)->findOneBy(['name' => $site]);
+                        if (!$siteEntity) {
+                            $this->addFlash('error', "Le site'$site' n'existe pas en base");
+                            continue;
+                        }
+
+                        $user->setSite($siteEntity);
+                        $user->setRoles(explode('|', $roles));
+                        $user->setIsActive(true);
+                        $user->setIsVerified(true);
+
+                        $em->persist($user);
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', "Erreur lors de la création de l'utilisateur $pseudo : " . $e->getMessage());
                         continue;
                     }
-
-                    $user->setSite($siteEntity);
-                    $user->setRoles(explode('|', $roles));
-                    $user->setIsActive(true);
-
-                    $em->persist($user);
                 }
-                fclose($handle);
-                $em->flush();
-
-                $this->addFlash('success', 'Utilisateurs importés avec succès');
-                return $this->redirectToRoute('app_event');
+                    fclose($handle);
+                    $em->flush();
+                    $this->addFlash('success', 'Utilisateurs importés avec succès');
+                    return $this->redirectToRoute('app_event');
+                }
             }
-        }
 
         return $this->render('user/import.html.twig', [
             'form' => $form,
