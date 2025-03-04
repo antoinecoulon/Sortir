@@ -34,7 +34,8 @@ class EventRepository extends ServiceEntityRepository
                 ->setParameter('organizer', $filters['organizer']);
         }
         if (isset($filters['registered'])) {
-            $queryBuilder->andWhere('event.participants = :registered')
+            $queryBuilder->innerJoin('event.participants', 'participant')
+                ->andWhere('participant.id IN (:registered)')
                 ->setParameter('registered', $filters['registered']);
         }
         return $queryBuilder->getQuery()->getResult();
