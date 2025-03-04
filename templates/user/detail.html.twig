@@ -2,11 +2,13 @@
 
 {% block body %}
     <h1 class="text-center mb-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ title }}</h1>
-    <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-        {% if user.photo!= null %}
-            <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src={# TODO: {{ asset( "uploads/Photos/" ~ user.photo }} #} alt="{# TODO : {{ user.pseudo }}#}">
-        {% endif %}
-        <div class="flex flex-col justify-between p-4 leading-normal">
+    <div class="flex flex-col items-center justify-center w-2/3 mx-auto mt-8 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+        <div class="w-48 h-48 mt-8 flex items-center justify-center rounded-t-lg shadow-md">
+            {% if user.photo!= null %}
+                <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="{{ asset('uploads/' ~ user.photo )}}" alt="Photo de {{ user.pseudo }}">
+            {% endif %}
+        </div>
+        <div class="flex flex-col justify-between p-4 leading-normal text-center">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ user.pseudo }}</h5>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Nom : {{ user.name }}</p>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Prénom : {{ user.firstname }}</p>

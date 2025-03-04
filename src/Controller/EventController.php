@@ -62,9 +62,12 @@ final class EventController extends AbstractController
             } else {
                 $isRegisteredById[$eventId] = false;
             }
-            // On teste les différents états (CREATED/OPENED géré en PrePersist - CANCELLED géré sur Annuler une sortie)
-            if ($event->getInscriptionLimitAt() <= $this->now) {
+            // On teste si la date de clotûre des inscriptions est passée
+            if ($event->getInscriptionLimitAt() <= $this->now && $event->getState() !== "CANCELLED") {
+
                 $event->setState('CLOSED');
+                $this->em->persist($event);
+                $this->em->flush();
             }
             if ($event->getStartAt() <= $this->now && $event->getEndAt() >= $this->now) {
                 $event->setState('PROCESSING');
