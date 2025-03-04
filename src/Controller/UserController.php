@@ -6,9 +6,12 @@ use App\Entity\Site;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Form\UserUploadType;
+use App\Helper\UploadFile;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -46,7 +49,7 @@ final class UserController extends AbstractController
         ]);
     }
     #[Route('/update/', name: 'update')]
-    public function update(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
+    public function update(Request $request, UploadFile $uploadFile, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
 
@@ -63,6 +66,18 @@ final class UserController extends AbstractController
             if (!empty($plainPassword)) {
                 $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
             }
+
+            // Upload profile picture
+            try {
+                if ($userForm->get('profilePicture')->getData()) {
+                    $file = $userForm->get('profilePicture')->getData();
+                    $name = $uploadFile->upload($file, $user->getPseudo(), $this->getParameter('kernel.project_dir') . '/public/uploads');
+                    $user->setPhoto($name);
+                }
+            } catch (FileException $e) {
+                $userForm->addError(new FormError($e->getMessage()));
+            }
+
             $em->flush();
             $this->addFlash('success', 'Utilisateur modifié avec succès');
 
