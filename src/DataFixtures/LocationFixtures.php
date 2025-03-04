@@ -23,8 +23,8 @@ class LocationFixtures extends Fixture
             $location->setStreetNumber($faker->buildingNumber());
             $location->setCity($faker->city());
             $location->setCp($faker->postcode());
-            $location->setLongitude($faker->longitude());
-            $location->setLatitude($faker->latitude());
+            $location->setLongitude($faker->longitude(5, 10));
+            $location->setLatitude($faker->latitude(41, 51));
 
             $manager->persist($location);
             $this->setReference('location_'.$i, $location);

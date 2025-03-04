@@ -16,6 +16,12 @@
                 <div class="mt-5">
                     {{ form_row(form.isPublished) }}
                 </div>
+                <div class="mt-5">
+                    {{ form_row(form.isPrivate) }}
+                </div>
+            </div>
+            <div>
+                {{ form_row(form.privateGroup) }}
             </div>
             <div class="flex justify-around items-center">
                 {{ form_row(form.startAt) }}
@@ -100,8 +106,8 @@
              {{ parent() }}
         {{ vite_entry_script_tags('address') }}
     {% endblock %}
-
 {% endblock %}
+
 
 
 

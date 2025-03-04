@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\Group;
 use App\Form\EventType;
 use App\Helper\UploadFile;
 use App\Repository\EventRepository;
+use App\Repository\GroupRepository;
 use App\Service\EventService;
 use DateTime;
 use Doctrine\DBAL\Exception;
@@ -89,7 +91,9 @@ final class EventController extends AbstractController
     public function create(Request $request, UploadFile $uploadFile): Response
     {
         $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $groupRepository = $this->em->getRepository(Group::class);
+        $groups = $groupRepository->findBy(['creator' => $this->getUser()]);
+        $form = $this->createForm(EventType::class, $event, ['groups' => $groups]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $event->setOrganizer($this->getUser());
@@ -141,10 +145,11 @@ final class EventController extends AbstractController
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
     public function update(Event $event, Request $request, UploadFile $uploadFile): Response
     {
-        if (!$this->eventService->isEventCreator($event, $this->getUser())) {
+        if (!$this->eventService->isEventCreator($event, $this->getUser()) && !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Modification interdite");
         }
-        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false]);
+        $readonly =  $this->isGranted("ROLE_ADMIN") && !$this->eventService->isEventCreator($event, $this->getUser());
+        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false, 'display_isPrivate' => false, 'readonly' =>  $readonly]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('image')->getData()) {
@@ -159,9 +164,9 @@ final class EventController extends AbstractController
         }
 
         return $this->render('event/update.html.twig', [
+            'event' =>$event,
+            'readonly' =>  $readonly,
             'form' => $form,
-            'isPublished' => $event->isPublished(),
-            'id' => $event->getId(),
             'canCancel' => $this->eventService->canCancel($event)
         ]);
     }
@@ -169,7 +174,7 @@ final class EventController extends AbstractController
     #[Route('/event/delete/{id}', name: 'app_event_delete', requirements: ['id' => '\d+'])]
     public function delete(Event $event): Response
     {
-        if (!$this->eventService->isEventCreator($event, $this->getUser()) || !$this->isGranted("ROLE_ADMIN")) {
+        if (!$this->eventService->isEventCreator($event, $this->getUser()) && !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Annulation interdite");
         }
         $this->em->remove($event);
@@ -195,7 +200,7 @@ final class EventController extends AbstractController
     #[Route('/event/cancel/{id}', name: 'app_event_cancel', requirements: ['id' => '\d+'])]
     public function cancel(Event $event, Request $request): Response
     {
-        if (!$this->eventService->isEventCreator($event, $this->getUser()) || !$this->isGranted("ROLE_ADMIN")) {
+        if (!$this->eventService->isEventCreator($event, $this->getUser()) && !$this->isGranted("ROLE_ADMIN")) {
             throw $this->createAccessDeniedException("Annulation interdite");
         }
         $cancelMessage = $request->query->get("cancelMessage") || "Motif inconnu";

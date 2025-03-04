@@ -30,6 +30,15 @@ class Event
         self::CANCELLED
     ];
 
+    private const STATE_LABELS = [
+        self::CREATED => 'Créé',
+        self::OPENED => 'Ouvert',
+        self::CLOSED => 'Fermé',
+        self::PROCESSING => 'En encours',
+        self::FINISHED => 'Terminé',
+        self::CANCELLED => 'Annulé',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -97,6 +106,12 @@ class Event
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $cancelMessage = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Events')]
+    private ?Group $privateGroup = null;
+
+    #[ORM\Column]
+    private ?bool $isPrivate = null;
 
     public function __construct()
     {
@@ -303,5 +318,34 @@ class Event
         $this->cancelMessage = $cancelMessage;
 
         return $this;
+    }
+
+    public function getPrivateGroup(): ?Group
+    {
+        return $this->privateGroup;
+    }
+
+    public function setPrivateGroup(?Group $privateGroup): static
+    {
+        $this->privateGroup = $privateGroup;
+
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->isPrivate;
+    }
+
+    public function setIsPrivate(bool $isPrivate): static
+    {
+        $this->isPrivate = $isPrivate;
+
+        return $this;
+    }
+
+    public function displayStateLabel(): string
+    {
+        return self::STATE_LABELS[$this->getState()] ?? 'Inconnu';
     }
 }

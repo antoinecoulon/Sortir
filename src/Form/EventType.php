@@ -3,21 +3,18 @@
 namespace App\Form;
 
 use App\Entity\Event;
+use App\Entity\Group;
 use App\Entity\Location;
 use App\Entity\Site;
-use App\Entity\User;
-use phpDocumentor\Reflection\Types\Integer;
+use App\Repository\GroupRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -26,51 +23,60 @@ class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isReadOnly = $options['readonly'];
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom'
+                'label' => 'Nom',
+                'disabled' => $isReadOnly
             ])
             ->add('description', TextAreaType::class, [
                 'label' => 'Description',
-                'required' => false
+                'required' => false,
+                'disabled' => $isReadOnly
             ])
             ->add('maxParticipant', IntegerType::class, [
                 'label' => 'Maximum de participants',
                 'attr' => [
                     'min' => 1,
                     'max' => 100
-                ]
+                ],
+                'disabled' => $isReadOnly
             ])
             // ->add('photo')
             ->add('startAt', DateTimeType::class, [
                 'label' => "Début de l'évènement",
                 'data' => (new \DateTimeImmutable())->modify('+2 day'),
                 'widget' => 'single_text',
+                'disabled' => $isReadOnly
             ])
             ->add('endAt', DateTimeType::class, [
                 'label' => "Fin de l'évènement",
                 'data' => (new \DateTime())->modify('+2 day')->modify('+3 hours'),
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                'disabled' => $isReadOnly
             ])
             ->add('inscriptionLimitAt', DateTimeType::class, [
                 'label' => "Date limite d'inscription",
                 'data' => (new \DateTime())->modify('+1 day'),
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                'disabled' => $isReadOnly
             ])
             ->add('site', EntityType::class, [
                 'label' => 'Site organisateur',
                 'class' => Site::class,
                 'choice_label' => 'name',
+                'disabled' => $isReadOnly
             ])
             ->add('location', EntityType::class, [
                 'label' => "Lieu de l'évènement",
                 'class' => Location::class,
                 'choice_label' => 'name',
-            ])
+                'disabled' => $isReadOnly
             ->add('image', FileType::class, [
                 'label' => 'Image',
                 'required' => false,
                 'mapped' => false,
+                'disabled' => $isReadOnly
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
@@ -82,11 +88,30 @@ class EventType extends AbstractType
             ])
         ;
 
-
         if($options['display_isPublish']) {
             $builder->add('isPublished', CheckboxType::class, [
                 'label' => 'Publié ?',
-                'required' => false
+                'required' => false,
+                'disabled' => $isReadOnly
+            ]);
+        }
+
+        if($options['display_isPrivate']) {
+            $builder->add('isPrivate', CheckboxType::class, [
+                'label' => 'Privé ?',
+                'required' => false,
+                'disabled' => $isReadOnly
+            ]);
+            $builder->add('privateGroup', EntityType::class, [
+                'label' => 'Groupe',
+                'class' => Group::class,
+                'choice_label' => 'name',
+                'choices' => $options['groups'],
+                'required' => false,
+                'attr' => [
+                    'hidden' => true
+                ],
+                'disabled' => $isReadOnly
             ]);
         }
     }
@@ -95,7 +120,10 @@ class EventType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Event::class,
-            'display_isPublish' => true
+            'display_isPublish' => true,
+            'display_isPrivate' => true,
+            'groups' => [],
+            'readonly' => false
         ]);
     }
 }

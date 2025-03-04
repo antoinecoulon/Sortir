@@ -102,9 +102,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    /**
+     * @var Collection<int, Group>
+     */
+    #[ORM\OneToMany(targetEntity: Group::class, mappedBy: 'creator')]
+    private Collection $privateGroups;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->privateGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -329,6 +336,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getPrivateGroups(): Collection
+    {
+        return $this->privateGroups;
+    }
+
+    public function addPrivateGroup(Group $privateGroup): static
+    {
+        if (!$this->privateGroups->contains($privateGroup)) {
+            $this->privateGroups->add($privateGroup);
+            $privateGroup->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrivateGroup(Group $privateGroup): static
+    {
+        if ($this->privateGroups->removeElement($privateGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($privateGroup->getCreator() === $this) {
+                $privateGroup->setCreator(null);
+            }
+        }
 
         return $this;
     }

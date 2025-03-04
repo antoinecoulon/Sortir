@@ -3,17 +3,22 @@
 namespace App\Service;
 
 use App\Entity\Event;
+use App\Entity\User;
 use DateTime;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventService {
-    public function canCancel($event): bool
+    public function canCancel(Event $event): bool
     {
         return ($event->getState() === Event::OPENED && $event->getStartAt() > (new DateTime())->modify('-1 hour'));
     }
 
-    public function isEventCreator($event, $user): bool
+    public function isEventCreator(Event $event, UserInterface $user): bool
     {
-        return ($event && $user && $event->getOrganizer() && $event->getOrganizer()->getId() === $user->getId());
+        if($user instanceof User) {
+            return ($event->getOrganizer() && $event->getOrganizer()->getId() === $user->getId());
+        }
+        return false;
     }
 }
 

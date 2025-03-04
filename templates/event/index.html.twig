@@ -3,6 +3,7 @@
 {% block title %}{{ parent() }} | Liste des évênements{% endblock %}
 
 {% block body %}
+    <div class="flex flex-col gap-5">
     <div class="flex justify-between items-center">
         <div>Page d'accueil</div>
 
@@ -68,7 +69,7 @@
                     {{ inscriptionCount[event.id] }} / {{ event.maxParticipant }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ event.state }}
+                    {{ event.displayStateLabel }}
                 </td>
                 <td class="px-6 py-4">
                     {% if isRegisteredById[event.id] %}
@@ -82,15 +83,15 @@
                 </td>
                 <td class="px-6 py-4">
                     <a href="{{ path('app_user_detail', {'userId' : event.organizer.id}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{event.organizer ? event.organizer.name: 'Inconnu' }}</a>
-                </td>f
+                </td>
                 <td class="px-6 py-4">
                     <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
                     {% if app.user.id is same as(event.organizer.id) %}
-                    <a href="#">Modifier</a>
+                    <a href="{{ path('app_event_update', {id: event.id}) }}">Modifier</a>
                     {% endif %}
-                    {% if app.user.id is same as(event.organizer.id) or is_granted('ROLE_ADMIN') %}
-                    <a href="#">Annuler</a>
-                    {% endif %}
+{#                    {% if app.user.id is same as(event.organizer.id) or is_granted('ROLE_ADMIN') %}#}
+{#                    <a href="#">Annuler</a>#}
+{#                    {% endif %}#}
                 </td>
             </tr>
             {% endfor %}
@@ -148,6 +149,5 @@
             {% endfor %}
         </div>
     </div>
-
-
+    </div>
 {% endblock %}
