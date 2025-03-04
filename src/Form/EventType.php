@@ -3,20 +3,17 @@
 namespace App\Form;
 
 use App\Entity\Event;
+use App\Entity\Group;
 use App\Entity\Location;
 use App\Entity\Site;
-use App\Entity\User;
-use phpDocumentor\Reflection\Types\Integer;
+use App\Repository\GroupRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -72,13 +69,32 @@ class EventType extends AbstractType
                 'required' => false
             ]);
         }
+
+        if($options['display_isPrivate']) {
+            $builder->add('isPrivate', CheckboxType::class, [
+                'label' => 'Privé ?',
+                'required' => false
+            ]);
+            $builder->add('privateGroup', EntityType::class, [
+                'label' => 'Groupe',
+                'class' => Group::class,
+                'choice_label' => 'name',
+                'choices' => $options['groups'],
+                'required' => false,
+                'attr' => [
+                    'hidden' => true
+                ],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Event::class,
-            'display_isPublish' => true
+            'display_isPublish' => true,
+            'display_isPrivate' => true,
+            'groups' => []
         ]);
     }
 }

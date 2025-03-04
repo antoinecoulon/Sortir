@@ -51,7 +51,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $this->setReference('user_'.$i, $user);
        }
 
-       for ($i = 0; $i < 10; $i++) {
+       for ($i = 4; $i < 15; $i++) {
            $user = new User();
 
            $user->setPseudo($faker->userName());

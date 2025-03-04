@@ -97,3 +97,15 @@ async function sendForm() {
     }
 }
 
+
+const eventGroupEl = document.getElementById('event_privateGroup')
+const isPrivateEl = document.getElementById('event_isPrivate')
+
+isPrivateEl.addEventListener("change", evt => {
+    if(evt.target.checked) {
+        eventGroupEl.removeAttribute('hidden')
+    } else {
+        eventGroupEl.setAttribute('hidden', true)
+    }
+})
+

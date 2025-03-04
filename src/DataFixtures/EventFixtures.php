@@ -16,6 +16,7 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
+        $privateEventId = 0;
 
         for ($i = 0; $i < 10; $i++) {
             $event = new Event();
@@ -36,6 +37,14 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
                 $event->setState(Event::CREATED);
             }
 
+            // Groupe privé
+            $event->setIsPrivate($faker->boolean());
+
+            if($event->isPrivate()) {
+                $this->setReference('private_event_'. $privateEventId, $event);
+                $privateEventId++;
+            }
+
             $startAt = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+2 months'));
             $inscriptionLimitAt = \DateTimeImmutable::createFromMutable($faker->dateTimeBetween('now', '+1 month'));
 
@@ -47,6 +56,12 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
             $event->setInscriptionLimitAt($inscriptionLimitAt);
             $event->setEndAt($endAt);
 
+            // Ajouter des participants
+            for ($x = 0; $x < rand(1, 5); $x++) {
+                $user = $this->getReference('user_'. rand(5, 9), User::class);
+                $event->addParticipant($user);
+            }
+
             // Dépendance Site
             $site = $this->getReference('site_'. rand(0, 3), Site::class);
             $event->setSite($site);
@@ -56,8 +71,9 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
             $event->setLocation($location);
 
             // Dépendance User
-            $user = $this->getReference('user_'. rand(0, 9), User::class);
+            $user = $this->getReference('user_'. rand(0, 4), User::class);
             $event->setOrganizer($user);
+
 
             $manager->persist($event);
         }

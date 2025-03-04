@@ -98,6 +98,12 @@ class Event
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $cancelMessage = null;
 
+    #[ORM\ManyToOne(inversedBy: 'Events')]
+    private ?Group $privateGroup = null;
+
+    #[ORM\Column]
+    private ?bool $isPrivate = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -301,6 +307,30 @@ class Event
     public function setCancelMessage(?string $cancelMessage): static
     {
         $this->cancelMessage = $cancelMessage;
+
+        return $this;
+    }
+
+    public function getPrivateGroup(): ?Group
+    {
+        return $this->privateGroup;
+    }
+
+    public function setPrivateGroup(?Group $privateGroup): static
+    {
+        $this->privateGroup = $privateGroup;
+
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->isPrivate;
+    }
+
+    public function setIsPrivate(bool $isPrivate): static
+    {
+        $this->isPrivate = $isPrivate;
 
         return $this;
     }

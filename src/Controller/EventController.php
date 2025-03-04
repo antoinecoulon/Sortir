@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\Group;
 use App\Form\EventType;
 use App\Repository\EventRepository;
+use App\Repository\GroupRepository;
 use App\Service\EventService;
 use DateTime;
 use Doctrine\DBAL\Exception;
@@ -79,7 +81,9 @@ final class EventController extends AbstractController
     public function create(Request $request): Response
     {
         $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $groupRepository = $this->em->getRepository(Group::class);
+        $groups = $groupRepository->findBy(['creator' => $this->getUser()]);
+        $form = $this->createForm(EventType::class, $event, ['groups' => $groups]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $event->setOrganizer($this->getUser());
