@@ -2,6 +2,8 @@ twig:
     file_name_pattern: '*.twig'
     form_themes:
         - '@TalesFromADevFlowbite/form/default.html.twig'
+    globals:
+        app_name: 'Ma super app'
 
 when@test:
     twig:

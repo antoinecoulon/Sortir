@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\Site;
 use App\Form\EventType;
 use App\Repository\EventRepository;
 use App\Service\EventService;
@@ -33,18 +34,31 @@ final class EventController extends AbstractController
     }
 
     #[Route(['/', '/event'], name: 'app_event', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         // On teste si un utilisateur est connecté
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $this->addFlash('success', "Bienvenue {$this->getUser()->getName()}");
-        } else {
-            $this->addFlash('error', 'Vous avez tenté d\'accéder à une page à laquelle vous n\'avez pas accès. Veuillez vous identifier.');
-            return $this->redirectToRoute('app_login');
+//        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+//            $this->addFlash('success', "Bienvenue {$this->getUser()->getName()}");
+//        } else {
+//            $this->addFlash('error', 'Vous avez tenté d\'accéder à une page à laquelle vous n\'avez pas accès. Veuillez vous identifier.');
+//            return $this->redirectToRoute('app_login');
+//        }
+
+        //dump($this->getUser());
+        //***** La gestion des filtres ******
+        $filters = $request->query->all(); // récupère tout ce qu'il y a dans le GET
+
+        // regarder si la case est cochée
+        if (isset($filters['organizer'])){
+            $filters['organizer'] = $this->getUser();
         }
 
-        // On récupère la liste des événements
-        $events = $this->eventRepository->findAll();
+        // Search bar
+        $events = $this->eventRepository->filtersFindAllSite($filters);
+
+        // Liste déroulante sur tous les sites
+        $siteRepository = $this->em->getRepository(Site::class);
+        $sites = $siteRepository->findAll();
 
         // On initialise nos variables
         $inscriptionsCountById = [];
@@ -72,8 +86,12 @@ final class EventController extends AbstractController
             'events' => $events,
             'inscriptionCount' => $inscriptionsCountById,
             'isRegisteredById' => $isRegisteredById,
+            'sites' => $sites
         ]);
     }
+
+
+
 
     #[Route('/event/create', name: 'app_event_create')]
     public function create(Request $request): Response
