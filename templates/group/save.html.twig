@@ -26,6 +26,6 @@
 
 
 {% block title %}
-
+    {{ parent() }} | {{ group.id ? "Modifier le groupe " ~ group.name : "Créer un groupe"}}
 {% endblock %}
 

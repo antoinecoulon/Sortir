@@ -44,7 +44,7 @@ final class UserController extends AbstractController
 
 
         return $this->render('user/detail.html.twig', [
-            'title' => 'Detail Utilisateur',
+            'title' => 'Mon profil',
             'user' => $user,
         ]);
     }
@@ -85,7 +85,7 @@ final class UserController extends AbstractController
         }
 
         return $this->render('user/update.html.twig', [
-            'title' => 'Modifier l\'Utilisateur',
+            'title' => 'Modifier le profil',
             'userForm' => $userForm,
         ]);
     }
@@ -113,8 +113,6 @@ final class UserController extends AbstractController
                     $firstLine = substr($firstLine, 3);
                 }
 
-
-                $firstRow = true;
                 while (($data = fgetcsv($handle, 1000, ';')) !== false) {
 
                     if (count($data) < 8) {
@@ -164,7 +162,69 @@ final class UserController extends AbstractController
 
         return $this->render('user/import.html.twig', [
             'form' => $form,
-            'title' => 'Import des utilisateurs',
+            'title' => 'Importer des utilisateurs',
         ]);
+    }
+
+    #[Route('/list', name: 'list')]
+    public function list(UserRepository $userRepository): Response
+    {
+        if ($this->getUser()) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_event');
+            }
+        }
+        $users = $userRepository->findAll();
+
+        return $this->render('user/list.html.twig', [
+            'users' => $users,
+            'title' => 'Liste des utilisateurs',
+        ]);
+    }
+
+    #[Route('/desactivate/{userId}', name: 'desactivate', requirements: ['userId' => '\d+'])]
+    public function desactivate(int $userId, UserRepository $userRepository, EntityManagerInterface $em): Response
+    {
+        if(!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException("Accès interdit");
+        }
+
+        $user = $userRepository->findUserById($userId);
+
+        $user->setIsActive(false);
+
+        $em->flush();
+        $this->addFlash('success', "Le compte de l'utilisateur {$user->getFirstname()} a bien été désactivé");
+        return $this->redirectToRoute("app_user_list");
+    }
+
+    #[Route('/activate/{userId}', name: 'activate', requirements: ['userId' => '\d+'])]
+    public function activate(int $userId, UserRepository $userRepository, EntityManagerInterface $em): Response
+    {
+        if(!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException("Accès interdit");
+        }
+
+        $user = $userRepository->findUserById($userId);
+
+        $user->setIsActive(true);
+
+        $em->flush();
+        $this->addFlash('success', "Le compte de l'utilisateur {$user->getFirstname()} a bien été réactivé");
+        return $this->redirectToRoute("app_user_list");
+    }
+
+    #[Route('/delete/{userId}', name: 'delete', requirements: ['userId' => '\d+'])]
+    public function delete(int $userId, UserRepository $userRepository, EntityManagerInterface $em): Response
+    {
+        if(!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException("Accès interdit");
+        }
+        $user = $userRepository->findUserById($userId);
+
+       $em->remove($user);
+       $em->flush();
+        $this->addFlash('success', "Le compte de l'utilisateur {$user->getFirstname()} a bien été supprimé");
+        return $this->redirectToRoute("app_user_list");
     }
 }

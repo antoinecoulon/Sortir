@@ -9,35 +9,35 @@
 
             {{ form_row(form.name) }}
             {{ form_row(form.description) }}
-            <div class="flex justify-around items-center">
+            <div class="flex flex-col sm:flex-row justify-around items-center">
                 <div>
                     {{ form_row(form.maxParticipant) }}
                 </div>
-                <div class="mt-5">
+                <div class="sm:mt-5">
                     {{ form_row(form.isPublished) }}
                 </div>
-                <div class="mt-5">
+                <div class="sm:mt-5">
                     {{ form_row(form.isPrivate) }}
                 </div>
             </div>
             <div>
                 {{ form_row(form.privateGroup) }}
             </div>
-            <div class="flex justify-around items-center">
+            <div class="flex flex-col sm:flex-row justify-around items-center">
                 {{ form_row(form.startAt) }}
                 {{ form_row(form.endAt) }}
             </div>
             <div class="flex justify-center">
                 {{ form_row(form.inscriptionLimitAt) }}
             </div>
-            <div class="flex gap-5">
+            <div class="flex flex-col sm:flex-row sm:gap-5">
                 <div class="grow">
                     {{ form_row(form.site) }}
                 </div>
                 <div class="grow">
                     {{ form_row(form.location) }}
                 </div>
-                <div class="flex items-center mt-5 cursor-pointer" data-modal-target="location-modal" data-modal-toggle="location-modal">
+                <div class="flex items-center mb-5 sm:mt-5 cursor-pointer" data-modal-target="location-modal" data-modal-toggle="location-modal">
                     <svg class="w-6 h-6 text-purple-600" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -83,7 +83,7 @@
                             <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Saissez une adresse</label>
                             <input type="text"  id="address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Rechercher une adresse" required>
                         </div>
-                        <div id="addressList" tabindex="1" class="absolute mt-20 dark:text-white dark:bg-gray-600 bg-black text-black rounded-lg"></div>
+                        <div id="addressList" tabindex="1" class="absolute mt-20 bg-gray-300 dark:text-white dark:bg-gray-600  text-black rounded-lg"></div>
                         <div id="data-address"></div>
                         <div class="col-span-2">
                             <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom du lieu</label>
@@ -112,6 +112,6 @@
 
 
 {% block title %}
-
+    {{ parent() }} | Créer un événement
 {% endblock %}
 

@@ -52,8 +52,8 @@ function addClickListener(length) {
     while (idx < length) {
         document.getElementById(`address-${idx}`).addEventListener("click", evt => {
             const addressIdx = evt.target.id.split("-")[1]
-            address = addresses[addressIdx].properties
-            searchInput.value = address.label
+            address = addresses[addressIdx]
+            searchInput.value = address.properties.label
             // DEBUG document.getElementById("data-address").innerHTML = `<pre>${JSON.stringify(address, null, 2)}</pre>`
             addresses = []
             listTarget.innerHTML = renderList()
@@ -67,12 +67,12 @@ async function sendForm() {
     if (address && locationNameValue && addressForm.checkValidity()) {
         const location = {
             name: locationNameValue,
-            street: address.street,
-            streetNumber: address.housenumber ?? null,
-            city: address.city,
-            cp: address.postcode,
-            latitude: address.y,
-            longitude: address.x
+            street: address.properties.street,
+            streetNumber: address.properties.housenumber ?? null,
+            city: address.properties.city,
+            cp: address.properties.postcode,
+            longitude:address.geometry.coordinates[0],
+            latitude: address.geometry.coordinates[1]
         }
 
         const body = {
