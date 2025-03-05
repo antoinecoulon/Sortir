@@ -83,6 +83,7 @@ class EventRepository extends ServiceEntityRepository
                 ->setParameter('currentDate', new \DateTime());
         }
 
+        // Pas d'affichage pour les events de + d'un mois
         $queryBuilder->andWhere('event.endAt > :maxDate')
             ->setParameter('maxDate', (new \DateTime())->modify('-1 month'));
 
