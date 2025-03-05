@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Utilisateur créé avec succès');
-                return $this->redirectToRoute('app_user_import');
+                return $this->redirectToRoute('app_user_list');
             }
             $entityManager->persist($user);
             $entityManager->flush();
