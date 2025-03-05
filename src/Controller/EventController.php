@@ -35,12 +35,15 @@ final class EventController extends AbstractController
         $this->now = new \DateTimeImmutable();
     }
 
+    /**
+     * Index - Events list
+     * @return Response
+     */
     #[Route('/', name: 'app_event', methods: ['GET'])]
     public function index(): Response
     {
         // On récupère la liste des événements
         $events = $this->eventRepository->findAll();
-
         // On initialise nos variables
         $inscriptionsCountById = [];
         $isRegisteredById = [];
@@ -79,6 +82,12 @@ final class EventController extends AbstractController
         ]);
     }
 
+    /**
+     * Create an event
+     * @param Request $request
+     * @param UploadFile $uploadFile
+     * @return Response
+     */
     #[Route('/event/create', name: 'app_event_create')]
     public function create(Request $request, UploadFile $uploadFile): Response
     {
@@ -106,9 +115,9 @@ final class EventController extends AbstractController
     }
 
     /**
+     * Show event[id] details
      * @param Event $event
      * @return Response
-     * @throws Exception
      */
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
@@ -118,7 +127,6 @@ final class EventController extends AbstractController
         if ($event->getParticipants()->contains($this->getUser())) {
             $isRegistered = true;
         }
-
         // Calculer la date d'inscription limite
         if ($event->getInscriptionLimitAt() >= $this->now) {
             $limitIsPassed = false;
@@ -134,6 +142,13 @@ final class EventController extends AbstractController
         ]);
     }
 
+    /**
+     * Update event[id]
+     * @param Event $event
+     * @param Request $request
+     * @param UploadFile $uploadFile
+     * @return Response
+     */
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
     public function update(Event $event, Request $request, UploadFile $uploadFile): Response
     {
@@ -163,6 +178,11 @@ final class EventController extends AbstractController
         ]);
     }
 
+    /**
+     * Delete event[id]
+     * @param Event $event
+     * @return Response
+     */
     #[Route('/event/delete/{id}', name: 'app_event_delete', requirements: ['id' => '\d+'])]
     public function delete(Event $event): Response
     {
@@ -175,6 +195,11 @@ final class EventController extends AbstractController
         return $this->redirectToRoute('app_event');
     }
 
+    /**
+     * Set event[id] isPublished property to true
+     * @param Event $event
+     * @return Response
+     */
     #[Route('/event/publish/{id}', name: 'app_event_publish', requirements: ['id' => '\d+'])]
     public function publish(Event $event): Response
     {
@@ -189,6 +214,12 @@ final class EventController extends AbstractController
         return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
     }
 
+    /**
+     * Set event[id] state to CANCELLED
+     * @param Event $event
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/event/cancel/{id}', name: 'app_event_cancel', requirements: ['id' => '\d+'])]
     public function cancel(Event $event, Request $request): Response
     {
@@ -205,7 +236,7 @@ final class EventController extends AbstractController
         return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
     }
     /**
-     * 2003 - S'inscrire à un événement
+     * Register to an event
      * @param Event $event
      * @param Request $request
      * @return Response
@@ -232,7 +263,7 @@ final class EventController extends AbstractController
     }
 
     /**
-     * 2004 - Se désister d'un événement
+     * Unregister from an event
      * @param Event $event
      * @param Request $request
      * @return Response
