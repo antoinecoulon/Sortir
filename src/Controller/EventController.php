@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Group;
+use App\Entity\Site;
 use App\Form\EventType;
 use App\Helper\UploadFile;
 use App\Notification\Sender;
@@ -41,13 +42,23 @@ final class EventController extends AbstractController
      * @return Response
      */
     #[Route('/', name: 'app_event', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         // On récupère la liste des événements
         $events = $this->eventRepository->findAll();
         // On initialise nos variables
         $inscriptionsCountById = [];
         $isRegisteredById = [];
+
+        //***** La gestion des filtres ******
+        // Récupére tout ce qui est envoyé en GET
+        $params = $request->query->all();
+        $filters = $this->eventService->filtersEvent($params, $this->getUser());
+
+        $events = $this->eventRepository->filtersFindAllSite($filters);
+
+        $siteRepository = $this->em->getRepository(Site::class);
+        $sites = $siteRepository->findAll();
 
         // Pour chaque événement...
         foreach ($events as $event) {
@@ -80,6 +91,7 @@ final class EventController extends AbstractController
             'events' => $events,
             'inscriptionCount' => $inscriptionsCountById,
             'isRegisteredById' => $isRegisteredById,
+            'sites' => $sites
         ]);
     }
 
