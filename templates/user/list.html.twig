@@ -71,13 +71,13 @@
                         {{ user.email }}
                     </th>
                     <td class="px-6 py-4">
-                        <a href="{{ path('app_user_detail', {userId: user.id}) }}">Afficher le profil</a>
+                        <a href="{{ path('app_user_detail', {userId: user.id}) }} " class="text-blue-700 dark:text-blue-200">Afficher le profil</a>
                         {% if user.isActive %}
-                            <a href="{{ path('app_user_desactivate', {userId: user.id}) }}">Désactiver</a>
+                            <a href="{{ path('app_user_desactivate', {userId: user.id}) }}" class="text-orange-600 dark:text-orange-200">Désactiver</a>
                         {% else %}
-                            <a href="{{ path('app_user_activate', {userId: user.id}) }}">Réactiver</a>
+                            <a href="{{ path('app_user_activate', {userId: user.id}) }}" class="text-green-700 dark:text-green-300">Réactiver</a>
                         {% endif %}
-                        <a href="{{ path('app_user_delete', {userId: user.id}) }}">Supprimer</a>
+                        <a href="{{ path('app_user_delete', {userId: user.id}) }}" class="text-red-700 dark:text-red-300">Supprimer</a>
                     </td>
                 </tr>
             {% endfor %}

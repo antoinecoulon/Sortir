@@ -226,7 +226,7 @@ final class UserController extends AbstractController
 
        $em->remove($user);
        $em->flush();
-        $this->addFlash('success', "L'Utilisateur {$user->getFirstname()} a bien été supprimé");
+        $this->addFlash('success', "Le compte de l'utilisateur {$user->getFirstname()} a bien été supprimé");
         return $this->redirectToRoute("app_user_list");
     }
 }
