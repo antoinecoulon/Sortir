@@ -57,6 +57,12 @@ final class EventController extends AbstractController
             $filters['registered'] = $this->getUser();
         }
 
+        // Vérifie si la checkbox "Je ne suis pas inscrit.e" est cochée :
+        if (isset($filters['notRegistered'])) {
+            $filters['notRegistered'] = $this->getUser();
+            dump($filters['notRegistered']);
+        }
+
         // Search bar
         $events = $this->eventRepository->filtersFindAllSite($filters);
 

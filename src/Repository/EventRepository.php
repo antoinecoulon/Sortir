@@ -38,6 +38,17 @@ class EventRepository extends ServiceEntityRepository
                 ->andWhere('participant.id IN (:registered)')
                 ->setParameter('registered', $filters['registered']);
         }
+        if (isset($filters['notRegistered'])) {
+            $queryBuilder->andWhere('NOT EXISTS (
+            SELECT 1
+            FROM App\Entity\User userAlias
+            WHERE userAlias MEMBER OF event.participants
+            AND userAlias.id = :notRegistered
+            )')
+                ->setParameter('notRegistered', $filters['notRegistered']);
+        }
+
+
         return $queryBuilder->getQuery()->getResult();
     }
 }
