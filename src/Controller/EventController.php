@@ -85,7 +85,7 @@ final class EventController extends AbstractController
     /**
      * Create an event
      * @param Request $request
-     * @param UploadFile $uploadFile
+     * @param UploadFile $uploadFile helper to upload image files
      * @return Response
      */
     #[Route('/event/create', name: 'app_event_create')]
@@ -146,7 +146,7 @@ final class EventController extends AbstractController
      * Update event[id]
      * @param Event $event
      * @param Request $request
-     * @param UploadFile $uploadFile
+     * @param UploadFile $uploadFile helper to upload image files
      * @return Response
      */
     #[Route('/event/update/{id}', name: 'app_event_update', requirements: ['id' => '\d+'])]
