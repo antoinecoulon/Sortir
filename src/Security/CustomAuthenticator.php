@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
@@ -72,7 +73,13 @@ class CustomAuthenticator extends AbstractAuthenticator
                if (!$user->isVerified()) {
                    throw new CustomUserMessageAuthenticationException('Veuillez vérifier votre adresse email avant de vous connecter.');
                }
+
+               if (!$user->isActive()) {
+                   throw new CustomUserMessageAccountStatusException("Votre compte à été désactivé !  Veuillez vous rapprocher d'un administrateur pour en connaitre la raison.");
+               }
+
                return $user;
+
            }),
             new PasswordCredentials($password),
             [
@@ -106,6 +113,12 @@ class CustomAuthenticator extends AbstractAuthenticator
         // Vérifiez si l'exception est liée à l'email non vérifié
         if ($exception instanceof CustomUserMessageAuthenticationException &&
             $exception->getMessage() === 'Veuillez vérifier votre adresse email avant de vous connecter.') {
+            $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
+            return new RedirectResponse($this->urlGenerator->generate('app_login'));
+        }
+
+        if ($exception instanceof CustomUserMessageAccountStatusException &&
+            $exception->getMessage() === "Votre compte à été désactivé !  Veuillez vous rapprocher d'un administrateur pour en connaitre la raison.") {
             $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
             return new RedirectResponse($this->urlGenerator->generate('app_login'));
         }
