@@ -19,12 +19,12 @@
 
         <div class="container mx-auto flex flex-row flex-wrap flex-auto justify-center gap-6">
             {% for event in events %}
-                <div class="relative flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-xl md:flex-row md:max-w-xl hover:bg-gray-100 hover:border-blue-800 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:border-blue-400">
+                <div class="sm:relative flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-xl md:flex-row md:max-w-xl hover:bg-gray-100 hover:border-blue-800 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:border-blue-400">
                     {% set imagePath = 'uploads/' ~ event.photo %}
                     <img class="object-cover w-full mx-2 h-96 border border-gray-200 rounded-lg dark:border-gray-700 md:h-auto md:w-48 md:rounded-s-lg"
                          src="{{ (event.photo is not null and event.photo != '') ? asset(imagePath) : asset('images/logo.png') }}"
                          alt="Image de {{ event.name }}">
-                    <div class="flex flex-col justify-between p-4 leading-normal">
+                    <div class="relative flex flex-col justify-between p-4 leading-normal">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ event.name }}</h5>
                         <p class="mb-3 font-normal text-sm text-gray-700 dark:text-gray-400">Organisateur: <a
                                     href="{{ path('app_user_detail', {'userId' : event.organizer.id}) }}"
