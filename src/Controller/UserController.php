@@ -44,7 +44,7 @@ final class UserController extends AbstractController
 
 
         return $this->render('user/detail.html.twig', [
-            'title' => 'Detail Utilisateur',
+            'title' => 'Mon profil',
             'user' => $user,
         ]);
     }
@@ -85,7 +85,7 @@ final class UserController extends AbstractController
         }
 
         return $this->render('user/update.html.twig', [
-            'title' => 'Modifier l\'utilisateur',
+            'title' => 'Modifier le profil',
             'userForm' => $userForm,
         ]);
     }
@@ -162,7 +162,7 @@ final class UserController extends AbstractController
 
         return $this->render('user/import.html.twig', [
             'form' => $form,
-            'title' => 'Import des utilisateurs',
+            'title' => 'Importer des utilisateurs',
         ]);
     }
 
