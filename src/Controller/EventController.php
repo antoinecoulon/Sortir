@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Entity\Group;
 use App\Form\EventType;
 use App\Helper\UploadFile;
+use App\Notification\Sender;
 use App\Repository\EventRepository;
 use App\Repository\GroupRepository;
 use App\Service\EventService;
@@ -211,9 +212,11 @@ final class EventController extends AbstractController
      * @return Response
      */
     #[Route('/event/register/{id}', name: 'app_event_register', requirements: ['id' => '\d+'])]
-    public function register(Event $event, Request $request): Response
+    public function register(Event $event, Request $request, Sender $sender): Response
     {
-        if ($event->getParticipants()->contains($this->getUser())) {
+        $user =  $this->getUser();
+
+        if ($event->getParticipants()->contains($user)) {
             // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
             $this->addFlash('danger', 'Vous êtes déjà inscrit à cet event');
             return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
@@ -224,7 +227,8 @@ final class EventController extends AbstractController
             return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
         }
 
-        $event->addParticipant($this->getUser());
+        $event->addParticipant($user);
+        $sender->sendMailRegister($user, $event);
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "Vous êtes maintenant inscrit à l'événement {$event->getName()}");
@@ -238,15 +242,18 @@ final class EventController extends AbstractController
      * @return Response
      */
     #[Route('event/unregister/{id}', name: 'app_event_unregister', requirements: ['id' => '\d+'])]
-    public function unregister(Event $event, Request $request): Response
+    public function unregister(Event $event, Request $request, Sender $sender): Response
     {
-        if (!$event->getParticipants()->contains($this->getUser())) {
+        $user = $this->getUser();
+        if (!$event->getParticipants()->contains($user)) {
             // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
             $this->addFlash('danger', 'Vous n\'êtes pas inscrit à cet event');
             return $this->redirectToRoute('app_event_detail', ['id' => $event->getId()]);
         }
 
-        $event->removeParticipant($this->getUser());
+        $event->removeParticipant($user);
+        $sender->sendMailUnregister($user, $event);
+
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "Vous vous êtes désisté de l'événement {$event->getName()}");
