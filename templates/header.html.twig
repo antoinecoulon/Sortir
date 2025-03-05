@@ -33,8 +33,6 @@
                     </li>
                     {% if is_granted('ROLE_ADMIN') %}
                         <li>
-                            <a href="{{ path('app_user_import') }}"
-                               class="block max-sm:mb-2 max-sm:text-sm py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
                             <a href="{{ path('app_user_list') }}"
                                class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
                                aria-current="page">Admin</a>

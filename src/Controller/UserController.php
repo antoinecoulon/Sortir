@@ -156,7 +156,7 @@ final class UserController extends AbstractController
                     fclose($handle);
                     $em->flush();
                     $this->addFlash('success', 'Utilisateurs importés avec succès');
-                    return $this->redirectToRoute('app_event');
+                    return $this->redirectToRoute('app_user_list');
                 }
             }
 
