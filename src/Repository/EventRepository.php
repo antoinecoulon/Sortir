@@ -48,6 +48,10 @@ class EventRepository extends ServiceEntityRepository
                 ->setParameter('notRegistered', $filters['notRegistered']);
         }
 
+        if (isset($filters['outingPast'])) {
+            $queryBuilder->andWhere('event.startAt < :currentDate')
+                ->setParameter('currentDate', new \DateTime());
+        }
 
         return $queryBuilder->getQuery()->getResult();
     }

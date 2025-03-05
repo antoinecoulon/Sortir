@@ -60,7 +60,11 @@ final class EventController extends AbstractController
         // Vérifie si la checkbox "Je ne suis pas inscrit.e" est cochée :
         if (isset($filters['notRegistered'])) {
             $filters['notRegistered'] = $this->getUser();
-            dump($filters['notRegistered']);
+        }
+
+        // Vérifie si la checkbox "Sorties passées" est cochée :
+        if (isset($filters['outingPast'])) {
+            $filters['outingPast'] = new DateTime();
         }
 
         // Search bar
