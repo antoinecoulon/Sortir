@@ -23,7 +23,7 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
 
             $event->setName($faker->word());
             $event->setDescription($faker->text());
-            $event->setMaxParticipant($faker->numberBetween(0, 100));
+            $event->setMaxParticipant($faker->numberBetween(1, 100));
             $event->setIsPublished($faker->boolean());
             if ($event->isPublished()){
                 $eventCancelled = $faker->boolean();

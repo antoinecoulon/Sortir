@@ -5,6 +5,7 @@ framework:
         # failure_transport: failed
 
         transports:
+            sync: 'sync://'
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
@@ -21,6 +22,6 @@ framework:
             messenger.bus.default: [ ]
 
         routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
