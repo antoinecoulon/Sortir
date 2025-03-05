@@ -19,6 +19,13 @@ class EmailVerifier
     ) {
     }
 
+    /**
+     * @param string $verifyEmailRouteName
+     * @param User $user
+     * @param TemplatedEmail $email
+     * @return void
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
     {
 
@@ -40,7 +47,9 @@ class EmailVerifier
     }
 
     /**
-     * @throws VerifyEmailExceptionInterface
+     * @param Request $request
+     * @param User $user
+     * @return void
      */
     public function handleEmailConfirmation(Request $request, User $user): void
     {

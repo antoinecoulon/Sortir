@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block title %}Page non trouvée | Erreur 404{% endblock %}
+{% block body %}
+    <h1 class="text-center text-6xl text-extrabold text-gray-700 dark:text-gray-400">Page non trouvée</h1>
+
+    <div class="w-2/3 mx-auto">
+
+        <dotlottie-player
+                src="https://lottie.host/7ba70b0b-58bb-46a9-b626-5c0e10a89e96/b4rWm9xUto.lottie"
+                background="transparent"
+                speed="1"
+                style="width: 300px; height: 300px"
+                loop
+                autoplay
+                class="mx-auto"
+        ></dotlottie-player>
+
+        <p class="text-gray-700 dark:text-gray-400 text-center font-xl">
+            La page demandée n'a pas été trouvée ! Vérifiez l'URL ou revenez sur <a class="text-blue-500" href="{{ path('app_event') }}">la page d'accueil</a>.
+        </p>
+
+    </div>
+
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+{% endblock %}

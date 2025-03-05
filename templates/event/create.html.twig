@@ -9,35 +9,35 @@
 
             {{ form_row(form.name) }}
             {{ form_row(form.description) }}
-            <div class="flex justify-around items-center">
+            <div class="flex flex-col sm:flex-row justify-around items-center">
                 <div>
                     {{ form_row(form.maxParticipant) }}
                 </div>
-                <div class="mt-5">
+                <div class="sm:mt-5">
                     {{ form_row(form.isPublished) }}
                 </div>
-                <div class="mt-5">
+                <div class="sm:mt-5">
                     {{ form_row(form.isPrivate) }}
                 </div>
             </div>
             <div>
                 {{ form_row(form.privateGroup) }}
             </div>
-            <div class="flex justify-around items-center">
+            <div class="flex flex-col sm:flex-row justify-around items-center">
                 {{ form_row(form.startAt) }}
                 {{ form_row(form.endAt) }}
             </div>
             <div class="flex justify-center">
                 {{ form_row(form.inscriptionLimitAt) }}
             </div>
-            <div class="flex gap-5">
+            <div class="flex flex-col sm:flex-row sm:gap-5">
                 <div class="grow">
                     {{ form_row(form.site) }}
                 </div>
                 <div class="grow">
                     {{ form_row(form.location) }}
                 </div>
-                <div class="flex items-center mt-5 cursor-pointer" data-modal-target="location-modal" data-modal-toggle="location-modal">
+                <div class="flex items-center mb-5 sm:mt-5 cursor-pointer" data-modal-target="location-modal" data-modal-toggle="location-modal">
                     <svg class="w-6 h-6 text-purple-600" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -112,6 +112,6 @@
 
 
 {% block title %}
-
+    {{ parent() }} | Créer un événement
 {% endblock %}
 
