@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block title %}Oops... | Erreur 500{% endblock %}
+{% block body %}
+    <h1 class="text-center text-6xl text-extrabold text-gray-700 dark:text-gray-400">Erreur (500) du serveur...</h1>
+
+    <div class="w-2/3 mx-auto">
+
+        <dotlottie-player
+                src="https://lottie.host/f621ae0f-fe74-49c4-922b-f850d48960d6/qT5x64NcND.lottie"
+                background="transparent"
+                speed="1"
+                style="width: 300px; height: 300px"
+                loop
+                autoplay
+                class="mx-auto"
+        ></dotlottie-player>
+
+        <p class="text-gray-700 dark:text-gray-400 text-center font-xl">
+            Nous travaillons à résoudre ce problème le plus rapidement possible !! Merci pour votre patience...
+        </p>
+
+    </div>
+
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+{% endblock %}
