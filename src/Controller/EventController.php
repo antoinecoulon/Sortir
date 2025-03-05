@@ -46,31 +46,11 @@ final class EventController extends AbstractController
 
         //***** La gestion des filtres ******
         // Récupére tout ce qui est envoyé en GET
-        $filters = $request->query->all();
+        $params = $request->query->all();
+        $filters = $this->eventService->filtersEvent($params, $this->getUser());
 
-        // Vérifie si la checkbox "Je suis organisateur/trice" est cochée :
-        if (isset($filters['organizer'])){
-            $filters['organizer'] = $this->getUser();
-        }
-        // Vérifie si la checkbox "Je suis inscrit.e" est cochée :
-        if (isset($filters['registered'])) {
-            $filters['registered'] = $this->getUser();
-        }
-
-        // Vérifie si la checkbox "Je ne suis pas inscrit.e" est cochée :
-        if (isset($filters['notRegistered'])) {
-            $filters['notRegistered'] = $this->getUser();
-        }
-
-        // Vérifie si la checkbox "Sorties passées" est cochée :
-        if (isset($filters['outingPast'])) {
-            $filters['outingPast'] = new DateTime();
-        }
-
-        // Search bar
         $events = $this->eventRepository->filtersFindAllSite($filters);
 
-        // Liste déroulante : sites
         $siteRepository = $this->em->getRepository(Site::class);
         $sites = $siteRepository->findAll();
 
@@ -103,9 +83,6 @@ final class EventController extends AbstractController
             'sites' => $sites
         ]);
     }
-
-
-
 
     #[Route('/event/create', name: 'app_event_create')]
     public function create(Request $request): Response

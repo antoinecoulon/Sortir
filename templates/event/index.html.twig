@@ -11,10 +11,11 @@
         <form method="get" action="{{ path("app_event") }}">
             <div class="flex gap-16">
                 <section class="grid grid-cols-2 gap-3 items-center">
+
                     <!-- Search avec l'icône -->
                     <label for="testLabel2" class="text-right">Le nom de la sortie contient :</label>
                     <div class="relative w-full">
-                        <input type="search" id="testLabel2" name="search"
+                        <input type="search" id="testLabel2" name="search" value="{{ app.request.query.get('search') }}"
                                    class="border p-1 pl-10 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    placeholder="Search"/>
                         <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2"
@@ -26,17 +27,18 @@
                     <!-- Site avec la liste déroulante -->
                     <label for="siteList" class="text-right">Site :</label>
                     <select name="site" id="siteList" class="border p-1 rounded w-full">
+                        <option value="" {% if app.request.query.get('site') == '' %}selected{% endif %}>Tous</option>
                         {% for site in sites %}
-                            <option value="{{ site.id }}">{{ site.name }}</option>
+                            <option value="{{site.id}}" {% if app.request.query.get('site') ==  site.id %}selected{% endif %}>{{site.name}}</option>
                         {% endfor %}
                     </select>
 
                     <!-- Select date -->
                     <label for="date-start" class="text-right">Entre :</label>
                     <div class="flex gap-2 w-full">
-                        <input type="date" min="2025-02-28" max="2025-12-31" id="date-start" class="border p-1 rounded w-full"/>
+                        <input type="date" name="dateStart" value="{{ app.request.query.get('dateStart') }}" min="2025-02-28" max="2025-12-31" id="date-start" class="border p-1 rounded w-full"/>
                         <label for="date-end" class="text-right" id="">Et</label>
-                        <input type="date" min="2025-02-28" max="2025-12-31" id="date-end" class="border p-1 rounded w-full"/>
+                        <input type="date" name="dateEnd" value="{{ app.request.query.get('dateEnd') }}" min="2025-02-28" max="2025-12-31" id="date-end" class="border p-1 rounded w-full"/>
                     </div>
                 </section>
 
@@ -44,22 +46,27 @@
 
                     <!-- Checkbox -->
                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="outingOrganizer" name="organizer"/>
+                        <input type="checkbox" id="outingOrganizer" name="organizer"
+                               {% if app.request.query.get('organizer') is not empty %}checked{% endif %} />
                         <label for="outingOrganizer" class="inline">Sorties dont je suis l'organisateur/trice</label>
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="outingRegistered" name="registered"/>
+                        <input type="checkbox" id="outingRegistered" name="registered"
+                               {% if app.request.query.get('registered') is not empty %}checked{% endif %} />
                         <label for="outingRegistered" class="inline">Sorties auxquelles je suis inscrit/e</label>
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="outingNotRegistered" name="notRegistered"/>
+                        {{ app.request.query.get('notRegistered') }}
+                        <input type="checkbox" id="outingNotRegistered" name="notRegistered"
+                               {% if app.request.query.get('notRegistered') is not empty %}checked{% endif %} />
                         <label for="outingNotRegistered" class="inline">Sorties auxquelles je ne suis pas inscrit/e</label>
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="outingPast" name="outingPast"/>
+                        <input type="checkbox" id="outingPast" name="outingPast"
+                               {% if app.request.query.get('outingPast') is not empty %}checked{% endif %} />
                         <label for="outingPast" class="inline">Sorties passées</label>
                     </div>
 
