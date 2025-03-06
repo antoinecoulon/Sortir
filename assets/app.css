@@ -1,4 +1,6 @@
 @import "tailwindcss";
 @import "./styles/global.css";
+@import 'leaflet/dist/leaflet.css';
+
 
 @custom-variant dark (&:where(.dark, .dark *));

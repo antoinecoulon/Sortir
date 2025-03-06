@@ -208,7 +208,7 @@
                             data-organizer="{{ event.organizer.name|lower }}"
                             class="event-item relative flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-xl md:flex-row md:max-w-xl hover:bg-gray-100 hover:border-blue-800 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:border-blue-400">
                         {% set imagePath = 'uploads/' ~ event.photo %}
-                        <img class="event-item object-cover w-full mx-2 h-96 border border-gray-200 rounded-lg dark:border-gray-700 md:h-auto md:w-48 md:rounded-s-lg"
+                        <img class="event-item md:object-cover object-contain w-full mx-2 md:h-96 border border-gray-200 rounded-lg dark:border-gray-700 md:h-auto md:w-48 md:rounded-s-lg"
                              src="{{ (event.photo is not null and event.photo != '') ? asset(imagePath) : asset('images/logo.png') }}"
                              alt="Image de {{ event.name }}">
                         <div class="flex flex-col justify-between p-4 leading-normal relative">
@@ -247,7 +247,7 @@
                                     <span
                                             class="text-green-700 italic">({{ available }} places restantes)</span></p>
                             </div>
-                            <div>
+                            <div class="flex justify-center gap-5 items-center">
                                 <a href="{{ path('app_event_detail', {id: event.id}) }}">
 
                                     <button type="button"
@@ -276,26 +276,27 @@
             const toggleButton = document.getElementById('toggleFilters');
             const filtersDiv = document.getElementById('filters');
 
-            // Vérifiez la taille de l'écran au chargement de la page
-            if (window.innerWidth >= 1024) {
-                filtersDiv.className = '';
-            }
+            // Masquer les filtres par défaut
+            filtersDiv.className = 'hidden';
 
             // Ajoutez un écouteur d'événement pour le bouton
             toggleButton.addEventListener('click', function() {
-                if (filtersDiv.className === '') {
-                    filtersDiv.className = 'max-md:hidden';
-                } else {
+                if (filtersDiv.className === 'hidden') {
                     filtersDiv.className = '';
+                } else {
+                    filtersDiv.className = 'hidden';
                 }
             });
 
-            // Ajoutez un écouteur d'événement pour la redimensionnement de la fenêtre
+            // Ajoutez un écouteur d'événement pour le redimensionnement de la fenêtre
             window.addEventListener('resize', function() {
-                if (window.innerWidth > 1024) {
-                    filtersDiv.className = 'max-md:hidden';
-                } else {
+                // Si on est sur desktop (>1024px), on affiche les filtres
+                if (window.innerWidth >= 1024) {
                     filtersDiv.className = '';
+                }
+                // Si on est sur mobile/tablette (<1024px), on masque les filtres
+                else {
+                    filtersDiv.className = 'hidden';
                 }
             });
         });
