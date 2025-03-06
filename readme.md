@@ -6,27 +6,37 @@ La société ENI souhaite développer pour ses stagiaires actifs ainsi que ses a
 ## Lancement de l'application Sortir
 
 ### Installer les dépendances
-```sh
+```
 npm install
 ```
-```sh
+```
+npm i -g concurrently (OPTIONNEL) (pour lancer symfony serve & vite en même temps)
+```
+
+```
 composer install
 ```
 
 ### Configurer la base de données
 
 - exemple: DATABASE_URL="mysql://root:@127.0.0.1:3306/sortir?serverVersion=8.0.32&charset=utf8mb4"
-```sh
+```
 symfony console doctrine:database:create
 ```
-```sh
+```
 symfony console do:mi:mi
 ```
+```
+symfony console d:f:l
+```
+
 
 ### Lancer l'application
 
-```sh
-symfony console serve
+```
+npm run serve (SI vous avez installé concurrently)
+Sinon lancer “symfony serve” sur une fenêtre et “npm run dev” dans une autre
+
 ```
 
 ### En cas de bug, veuillez contacter notre formateur [François](https://github.com/DevFanch)

@@ -15,6 +15,13 @@
 
 </head>
 <body class="flex flex-col h-screen dark:bg-gray-800 ">
+<script>
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
+</script>
 
 {% include "header.html.twig" %}
 
@@ -25,11 +32,5 @@
 {% include "footer.html.twig" %}
 
 </body>
-<script>
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.body.classList.add('dark');
-    } else {
-        document.body.classList.remove('dark');
-    }
-</script>
+
 </html>
