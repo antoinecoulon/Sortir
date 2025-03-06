@@ -41,7 +41,6 @@ export default defineConfig({
             input: {
                 app: "./assets/app.js",
                 theme: "./assets/app.css",
-                address: "./assets/js/address.js",
                 leaflet: "./assets/js/leaflet.js"
             },
         }
