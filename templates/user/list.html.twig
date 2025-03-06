@@ -10,8 +10,8 @@
         {{ title }}
     </h1>
 
+    <!-- Boutons 'Importer' et 'Créer user' -->
     <div class="flex justify-between items-center">
-
         <div>
             <a href="{{ path('app_user_import') }}">
                 <button type="button"
@@ -27,7 +27,8 @@
         </div>
     </div>
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <!-- Tableau caché sur petits écrans -->
+    <div class="max-lg:hidden relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -85,6 +86,24 @@
         </table>
     </div>
 
+    <div class="lg:hidden">
+        {% for user in users %}
+        <ul class="p-4 text-center text-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+            <li class="font-bold text-gray-800 dark:text-gray-300">{{ user.pseudo }}</li>
+            <li>{{ user.firstname }} {{ user.name }}</li>
+            <li>{{ user.phone }}</li>
+            <li>{{ user.email }}</li>
+            <li>
+                <li><a href="{{ path('app_user_detail', {userId: user.id}) }} " class="text-blue-700 dark:text-blue-200">Afficher le profil</a><li>
+                {% if user.isActive %}
+                <li><a href="{{ path('app_user_desactivate', {userId: user.id}) }}" class="text-orange-600 dark:text-orange-200">Désactiver</a></li>
+                {% else %}
+                <li><a href="{{ path('app_user_activate', {userId: user.id}) }}" class="text-green-700 dark:text-green-300">Réactiver</a></li>
+                {% endif %}
+            <li><a href="{{ path('app_user_delete', {userId: user.id}) }}" class="text-red-700 dark:text-red-300">Supprimer</a></li>
+        </ul>
+        {% endfor %}
+    </div>
 
 {% endblock %}
 

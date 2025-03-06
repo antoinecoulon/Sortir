@@ -105,7 +105,7 @@
             </div>
         </div>
 
-
+        <!-- On affiche un tableau d'events -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table id="array" hidden class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -188,6 +188,7 @@
                 </tbody>
             </table>
 
+            <!-- ...ou en version cards -->
             <div id="card" hidden class="event-list container mx-auto flex flex-row flex-wrap flex-auto justify-center gap-6">
                 {% for event in events %}
                     <div
