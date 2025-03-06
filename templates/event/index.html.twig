@@ -52,8 +52,7 @@
 
                             <!-- Checkbox -->
                             <div class="flex items-center space-x-2 md:mt-6">
-                                <input
-                                        type="checkbox" id="outingOrganizer" name="organizer"
+                                <input type="checkbox" id="outingOrganizer" name="organizer"
                                        {% if app.request.query.get('organizer') is not empty %}checked{% endif %} />
                                 <label for="outingOrganizer"  class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties dont je suis l'organisateur/trice</label>
                             </div>
@@ -67,7 +66,8 @@
                             <div class="flex items-center space-x-2">
                                 <input type="checkbox" id="outingNotRegistered" name="notRegistered"
                                        {% if app.request.query.get('notRegistered') is not empty %}checked{% endif %} />
-                                <label for="outingNotRegistered"class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties auxquelles je ne suis pas inscrit/e</label>
+                                <label for="outingNotRegistered"class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                                    Sorties auxquelles je ne suis pas inscrit/e</label>
                             </div>
 
                             <div class="flex items-center space-x-2">
