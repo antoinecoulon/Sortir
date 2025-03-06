@@ -288,7 +288,7 @@ final class EventController extends AbstractController
         try {
             $sender->sendMailRegister($user, $event);
         } catch(\Exception $e) {
-            $this->logger->alert($e);
+            $this->logger->info($e);
         }
         $this->em->persist($event);
         $this->em->flush();
@@ -321,7 +321,7 @@ final class EventController extends AbstractController
         try {
             $sender->sendMailUnregister($user, $event);
         } catch(\Exception $e) {
-            $this->logger->alert($e);
+            $this->logger->info($e);
         }
         $this->em->persist($event);
         $this->em->flush();
