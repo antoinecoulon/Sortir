@@ -33,6 +33,9 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
+                    Avatar
+                </th>
+                <th scope="col" class="px-6 py-3">
                     Pseudo
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -56,6 +59,9 @@
 
             {% for user in users %}
                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                    <th scope="row" class="px-6 py-4 ">
+                        <img class="w-10 h-10 rounded-full object-cover" src="{{ user.photo ? asset('uploads/' ~ user.photo ) : asset('images/default-user.png')}}" alt="Photo de profil de {{ user.name }}"/>
+                    </th>
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ user.pseudo }}
                     </th>
@@ -90,6 +96,9 @@
         {% for user in users %}
         <ul class="p-4 text-center text-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
             <li class="font-bold text-gray-800 dark:text-gray-300">{{ user.pseudo }}</li>
+            <li>
+                <img class="mx-auto w-10 h-10 rounded-full object-cover" src="{{ user.photo ? asset('uploads/' ~ user.photo ) : asset('images/default-user.png')}}" alt="Photo de profil de {{ user.name }}"/>
+            </li>
             <li>{{ user.firstname }} {{ user.name }}</li>
             <li>{{ user.phone }}</li>
             <li>{{ user.email }}</li>
