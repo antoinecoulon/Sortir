@@ -26,6 +26,20 @@ import {watch, ref, onMounted} from 'vue'
 let display = ref('card')
 const arrayEL = document.getElementById('array')
 const cardEl = document.getElementById('card')
+const isMobile = window.innerWidth <= 1024
+
+onMounted(() => {
+  if(isMobile) {
+    toggle('card')
+  } else {
+    let storageDisplay = localStorage.getItem('display')
+    if (storageDisplay) {
+      toggle(storageDisplay)
+    } else {
+      toggle(display)
+    }
+  }
+})
 
 onMounted(() => {
   let storageDisplay = localStorage.getItem('display')
