@@ -32,6 +32,7 @@ class GroupFixtures extends Fixture implements DependentFixtureInterface
 
             for($i=0; $i < 2; $i++) {
                 $event = $this->getReference('private_event_' . rand(0, 3), Event::class);
+                $group->setCreator($event->getOrganizer());
                 $group->addEvent($event);
             }
 
@@ -39,8 +40,6 @@ class GroupFixtures extends Fixture implements DependentFixtureInterface
                 $user = $this->getReference('user_' . rand(4, 9), User::class);
                 $group->addUser($user);
             }
-            $creator = $this->getReference('user_' . rand(0, 3), User::class);
-            $group->setCreator($creator);
             $manager->persist($group);
         }
         $manager->flush();

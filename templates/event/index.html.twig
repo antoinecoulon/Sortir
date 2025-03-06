@@ -230,7 +230,12 @@
                                 </span>
                             {% endif %}
                             <p class="absolute top-10 right-2 mb-3 font-bold text-xs text-gray-700 dark:text-gray-400">
-                                [ {{ event.displayStateLabel }} ]</p>
+                                [ {{ event.displayStateLabel }} ]
+                                {% if event.isPrivate %}
+                                    [ Privé ]
+                                {%endif %}
+
+                            </p>
                             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ event.description }}</p>
                             <div class="border border-gray-700 dark:border-gray-700 py-3 px-1 mb-3">
                                 <p class="mb-3 font-normal text-sm text-gray-700 dark:text-gray-400">Début de

@@ -14,9 +14,11 @@ use App\Service\EventService;
 use DateTime;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -28,13 +30,16 @@ final class EventController extends AbstractController
     private readonly EntityManagerInterface $em;
     private readonly EventService $eventService;
     private readonly \DateTimeImmutable $now;
+    private LoggerInterface  $logger;
 
-    public function __construct(EventRepository $eventRepository, EntityManagerInterface $em, EventService $eventService)
+
+    public function __construct(EventRepository $eventRepository, EntityManagerInterface $em, EventService $eventService, LoggerInterface  $logger)
     {
         $this->eventRepository = $eventRepository;
         $this->em = $em;
         $this->eventService = $eventService;
         $this->now = new \DateTimeImmutable();
+        $this->logger = $logger;
     }
 
     /**
@@ -50,12 +55,14 @@ final class EventController extends AbstractController
         $inscriptionsCountById = [];
         $isRegisteredById = [];
 
+        $user = $this->getUser();
+
         //***** La gestion des filtres ******
         // Récupére tout ce qui est envoyé en GET
         $params = $request->query->all();
         $filters = $this->eventService->filtersEvent($params, $this->getUser());
 
-        $events = $this->eventRepository->filtersFindAllSite($filters);
+        $events = $this->eventRepository->filtersFindAllSite($filters, $user);
 
         $siteRepository = $this->em->getRepository(Site::class);
         $sites = $siteRepository->findAll();
@@ -135,6 +142,11 @@ final class EventController extends AbstractController
     #[Route('/event/detail/{id}', name: 'app_event_detail', requirements: ['id' => '\d+'])]
     public function detail(Event $event): Response
     {
+        $user = $this->getUser();
+        if(!$this->eventService->canAccessPrivateGroup($event, $user) && !$this->isGranted("ROLE_ADMIN"))
+        {
+            throw $this->createAccessDeniedException("Accès interdit");
+        }
         $inscriptionCount = $event->getParticipants()->count();
         $isRegistered = false;
         if ($event->getParticipants()->contains($this->getUser())) {
@@ -169,7 +181,7 @@ final class EventController extends AbstractController
             throw $this->createAccessDeniedException("Modification interdite");
         }
         $readonly =  $this->isGranted("ROLE_ADMIN") && !$this->eventService->isEventCreator($event, $this->getUser());
-        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false, 'display_isPrivate' => false, 'readonly' =>  $readonly]);
+        $form = $this->createForm(EventType::class, $event,  ['display_isPublish' => false, 'display_isPrivate' => false, 'readonly' =>  $readonly, 'event' => $event]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && $this->eventService->isEventCreator($event, $this->getUser())) {
             if ($form->get('image')->getData()) {
@@ -258,6 +270,10 @@ final class EventController extends AbstractController
     public function register(Event $event, Request $request, Sender $sender): Response
     {
         $user =  $this->getUser();
+        if(!$this->eventService->canAccessPrivateGroup($event, $user) && !$this->isGranted("ROLE_ADMIN"))
+        {
+            throw $this->createAccessDeniedException("Accès interdit");
+        }
 
         if ($event->getParticipants()->contains($user)) {
             // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
@@ -271,7 +287,11 @@ final class EventController extends AbstractController
         }
 
         $event->addParticipant($user);
-        $sender->sendMailRegister($user, $event);
+        try {
+            $sender->sendMailRegister($user, $event);
+        } catch(\Exception $e) {
+            $this->logger->alert($e);
+        }
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "Vous êtes maintenant inscrit à l'événement {$event->getName()}");
@@ -288,6 +308,11 @@ final class EventController extends AbstractController
     public function unregister(Event $event, Request $request, Sender $sender): Response
     {
         $user = $this->getUser();
+        if(!$this->eventService->canAccessPrivateGroup($event, $user) && !$this->isGranted("ROLE_ADMIN"))
+        {
+            throw $this->createAccessDeniedException("Accès interdit");
+        }
+
         if (!$event->getParticipants()->contains($user)) {
             // Ne doit pas arriver puisque le bouton est caché, mais au cas où...
             $this->addFlash('danger', 'Vous n\'êtes pas inscrit à cet event');
@@ -295,8 +320,11 @@ final class EventController extends AbstractController
         }
 
         $event->removeParticipant($user);
-        $sender->sendMailUnregister($user, $event);
-
+        try {
+            $sender->sendMailUnregister($user, $event);
+        } catch(\Exception $e) {
+            $this->logger->alert($e);
+        }
         $this->em->persist($event);
         $this->em->flush();
         $this->addFlash('success', "Vous vous êtes désisté de l'événement {$event->getName()}");

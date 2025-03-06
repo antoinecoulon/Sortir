@@ -24,6 +24,7 @@ class EventType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $isReadOnly = $options['readonly'];
+        $event = $options['event'];
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
@@ -45,19 +46,19 @@ class EventType extends AbstractType
             // ->add('photo')
             ->add('startAt', DateTimeType::class, [
                 'label' => "Début de l'évènement",
-                'data' => (new \DateTimeImmutable())->modify('+2 day'),
+                'data' => $event && $event->getStartAt() ? $event->getStartAt() : (new \DateTimeImmutable())->modify('+2 day'),
                 'widget' => 'single_text',
                 'disabled' => $isReadOnly
             ])
             ->add('endAt', DateTimeType::class, [
                 'label' => "Fin de l'évènement",
-                'data' => (new \DateTime())->modify('+2 day')->modify('+3 hours'),
+                'data' =>  $event && $event->getEndAt() ? $event->getEndAt() : (new \DateTime())->modify('+2 day')->modify('+3 hours'),
                 'widget' => 'single_text',
                 'disabled' => $isReadOnly
             ])
             ->add('inscriptionLimitAt', DateTimeType::class, [
                 'label' => "Date limite d'inscription",
-                'data' => (new \DateTime())->modify('+1 day'),
+                'data' =>  $event && $event->getInscriptionLimitAt() ? $event->getInscriptionLimitAt() : (new \DateTime())->modify('+1 day'),
                 'widget' => 'single_text',
                 'disabled' => $isReadOnly
             ])
@@ -123,7 +124,8 @@ class EventType extends AbstractType
             'display_isPublish' => true,
             'display_isPrivate' => true,
             'groups' => [],
-            'readonly' => false
+            'readonly' => false,
+            'event' => null
         ]);
     }
 }
