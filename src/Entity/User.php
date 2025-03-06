@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         normalizer: 'trim')]
     #[Assert\Regex(
         pattern: '/^[a-zA-Z0-9._%+-]+@campus-eni\.fr$/',
-        message: "Veuillez renseigner une adresse email de type @campus-eni@.fr"
+        message: "Veuillez renseigner une adresse email de type @campus-eni.fr"
     )]
     private ?string $email = null;
 
