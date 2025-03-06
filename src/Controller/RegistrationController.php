@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Helper\UploadFile;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
@@ -26,7 +29,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UploadFile $uploadFile, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser()) {
             if (!$this->isGranted('ROLE_ADMIN')) {
@@ -41,6 +44,17 @@ class RegistrationController extends AbstractController
         if ($userForm->isSubmitted() && $userForm->isValid()) {
             /** @var string $plainPassword */
             $plainPassword = $userForm->get('plainPassword')->getData();
+
+            // Upload profile picture
+            try {
+                if ($userForm->get('profilePicture')->getData()) {
+                    $file = $userForm->get('profilePicture')->getData();
+                    $name = $uploadFile->upload($file, $user->getPseudo(), $this->getParameter('kernel.project_dir') . '/public/uploads');
+                    $user->setPhoto($name);
+                }
+            } catch (FileException $e) {
+                $userForm->addError(new FormError($e->getMessage()));
+            }
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));

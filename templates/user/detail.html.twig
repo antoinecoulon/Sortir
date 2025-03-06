@@ -4,7 +4,7 @@
     <h1 class="text-center mb-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ title }}</h1>
     <div class="flex flex-col items-center justify-center w-full md:w-2/3 mx-auto mt-8 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
         <div class="w-48 h-48 mt-8 flex items-center justify-center rounded-t-lg shadow-md">
-                <img class="object-cover w-full rounded-t-lg md:h-auto md:w-2/3 md:rounded-s-lg" src="{{ user.photo ? asset('uploads/' ~ user.photo ) : asset('images/default-user.png')}}" alt="Photo de {{ user.pseudo }}">
+                <img class="object-cover w-full rounded-t-lg md:h-auto md:rounded-s-lg" src="{{ user.photo ? asset('uploads/' ~ user.photo ) : asset('images/default-user.png')}}" alt="Photo de {{ user.pseudo }}">
         </div>
         <div class="flex flex-col justify-between p-4 leading-normal text-center">
             <h5 class="mb-3 text-2xl sm:text-6xl font-bold tracking-tight text-gray-900 dark:text-white">{{ user.pseudo }}</h5>
