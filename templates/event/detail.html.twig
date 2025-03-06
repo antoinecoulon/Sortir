@@ -24,7 +24,7 @@
                 {% set leftDays = duree.days %}
                 {% set leftHours = duree.h %}
                 <p class="mb-3 font-normal text-sm sm:text-lg dark:text-gray-200">du {{ event.startAt | date('d-m-Y à H:i') }} au {{ event.endAt | date('d-m-Y à H:i') }}</p>
-                <p class="mb-3 font-normal text-sm sm:text-lg dark:text-gray-200">({{ leftDays }} jours, {{ leftHours }} heures restantes)</p>
+                <p class="mb-3 font-normal text-sm sm:text-lg dark:text-gray-200">(Durée : {{ leftDays != 0 ? leftDays ~ " jours," : "" }} {{ leftHours }} heures)</p>
 
                 {% if limitIsPassed == true %}
                     <p class="mb-3 font-normal text-sm sm:text-lg text-red-500 dark:text-red-500">Inscriptions fermées</p>
