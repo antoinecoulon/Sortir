@@ -32,6 +32,14 @@ class EventService {
         return false;
     }
 
+    public function canAccessPrivateGroup(Event $event, UserInterface $user): bool
+    {
+        if($user instanceof User) {
+            return (!$event->isPrivate() || $user === $event->getOrganizer() || $event->getPrivateGroup()->getUsers()->contains($user));
+        }
+        return false;
+    }
+
     public function filtersEvent(array $params, $user) : array {
         $filters = [];
 

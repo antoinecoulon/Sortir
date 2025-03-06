@@ -17,7 +17,7 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function filtersFindAllSite(array $filters): array
+    public function filtersFindAllSite(array $filters, $user): array
     {
         $queryBuilder = $this->createQueryBuilder('event');
 
@@ -78,6 +78,30 @@ class EventRepository extends ServiceEntityRepository
         // Pas d'affichage pour les events de + d'un mois
         $queryBuilder->andWhere('event.endAt > :maxDate')
             ->setParameter('maxDate', (new \DateTime())->modify('-1 month'));
+
+        // Pas d'affichage pour les status créé et non publié sauf si je suis l'organisateur
+        $queryBuilder->andWhere('event.state != :created AND event.isPublished = :true OR event.state = :created AND event.organizer = :organizer AND event.isPublished = :false')
+            ->setParameter(':created', 'CREATED')
+            ->setParameter(':organizer', $user)
+            ->setParameter(':true', true)
+            ->setParameter(':false', false);
+
+        // Ne pas afficher les évènements avec groupé privé dont vous n'appartenez pas (sauf si vous etes l'organisateur
+        $queryBuilder
+            ->leftJoin('event.privateGroup', 'privateGroup')
+            ->leftJoin('privateGroup.Users', 'groupUser')
+            ->andWhere('event.isPrivate = :false 
+            OR (event.isPrivate = :true AND event.organizer = :user) 
+            OR (event.isPrivate = :true AND groupUser IN (:userId))')
+            ->setParameter(':user', $user)
+            ->setParameter(':userId', $user->getId())
+            ->setParameter(':true', true)
+            ->setParameter(':false', false);
+
+        $queryBuilder->orderBy('event.startAt', 'ASC');
+
+
+
 
         return $queryBuilder->getQuery()->getResult();
     }

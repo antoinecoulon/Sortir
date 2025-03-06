@@ -31,8 +31,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
            $user = new User();
 
            $user->setPseudo($team);
-           $user->setName($faker->lastName());
-           $user->setFirstName($faker->firstName());
+           $user->setName('nom ' . $team);
+           $user->setFirstName('prénom : '. $team);
            $user->setPassword('$2y$13$ZayE0.fuVPDs9oN0HXzR/.EYcgaP9JehTxqZirZ4GNbEnwQlrVxwC');
 
            $phoneNumber = $faker->numerify('0#########'); // Génère un numéro avec 10 chiffres
