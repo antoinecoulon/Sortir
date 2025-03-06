@@ -12,9 +12,9 @@
         </button>
         <!-- Partie filtres -->
         <div id="filters" class="max-md:hidden">
-            <div class="flex flex-col lg:flex-row justify-between items-center">
+            <div class="flex flex-col lg:flex-row justify-center items-center">
 
-                <form class="flex flex-col md:flex-row grow" method="get" action="{{ path("app_event") }}">
+                <form class="flex flex-col md:flex-row grow max-w-[700px]" method="get" action="{{ path("app_event") }}">
                     <div class="flex flex-col md:flex-row justify-center gap-16 grow items-center">
                         <section class="flex flex-col gap-2 ">
 
@@ -88,7 +88,7 @@
 
                 </form>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 mt-4">
                 <div class="flex flex-col lg:flex-row justify-center items-centers gap-5 max-lg:hidden">
                     <div
                             {{ vue_component('ToggleDisplay') }}
