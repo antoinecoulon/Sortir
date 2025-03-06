@@ -155,17 +155,14 @@
 
     </div>
 </div>
-
-    {% block javascripts %}
-        {{ parent() }}
-        {{ vite_entry_script_tags('leaflet') }}
-    {% endblock %}
-
     <script>
         let latitude = {{ event.location.latitude }};
         let longitude = {{ event.location.longitude }};
         let locationName = "{{ event.location.name }}";
         let markerLocation = "{{ asset('/images/location-icon.png') }}";
-
     </script>
+    {% block javascripts %}
+        {{ parent() }}
+        {{ vite_entry_script_tags('leaflet') }}
+    {% endblock %}
 {% endblock %}
