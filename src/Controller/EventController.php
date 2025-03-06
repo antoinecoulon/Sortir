@@ -49,9 +49,7 @@ final class EventController extends AbstractController
     #[Route('/', name: 'app_event', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        // On récupère la liste des événements
-        $events = $this->eventRepository->findAll();
-        // On initialise nos variables
+
         $inscriptionsCountById = [];
         $isRegisteredById = [];
 

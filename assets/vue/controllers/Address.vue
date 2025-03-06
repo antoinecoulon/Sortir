@@ -131,8 +131,6 @@ async function selectAddress(selectedAddress) {
 
 async function sendForm() {
   if (address.value && name.value && addressForm.value.checkValidity()) {
-    console.log('send form')
-
     const location = {
       name: name.value,
       street: address.value.properties.street,
@@ -145,7 +143,6 @@ async function sendForm() {
 
     try {
       const {data} = await axios.post('/location/create', location)
-      console.log(data)
       let newLocationOption = document.createElement('option');
       newLocationOption.value = data?.locationId;
       newLocationOption.textContent = data?.locationName;

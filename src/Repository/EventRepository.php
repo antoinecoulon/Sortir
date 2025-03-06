@@ -100,9 +100,6 @@ class EventRepository extends ServiceEntityRepository
 
         $queryBuilder->orderBy('event.startAt', 'ASC');
 
-
-
-
         return $queryBuilder->getQuery()->getResult();
     }
 }
