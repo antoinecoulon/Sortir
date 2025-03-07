@@ -7,7 +7,7 @@
         <h1 class="py-2 text-3xl text-center font-extrabold md:text-5xl lg:text-6x text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
             Les sorties en ligne !</h1>
 
-        <button id="toggleFilters" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+        <button id="toggleFilters" class="md:hidden text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
             Filtres
         </button>
         <!-- Partie filtres -->
@@ -94,20 +94,28 @@
                             {{ vue_component('ToggleDisplay') }}
                     ></div>
 
+                    <a href="{{ path('app_event_create') }}">
+                        <button type="button"
+                                class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                            Créer une sortie
+                        </button>
+                    </a>
+
                 </div>
                 <div
                         {{ vue_component('Filter') }}
                 ></div>
                 </div>
 
+                <a href="{{ path('app_event_create') }}" class="lg:hidden mt-3">
+                    <button type="button"
+                            class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                        Créer une sortie
+                    </button>
+                </a>
             </div>
         </div>
-        <a href="{{ path('app_event_create') }}" class="text-center mt-3">
-            <button type="button"
-                    class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                Créer une sortie
-            </button>
-        </a>
+
         <!-- On affiche un tableau d'events -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table id="array" hidden class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 max-lg:hidden">
