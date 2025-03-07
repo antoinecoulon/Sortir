@@ -53,18 +53,22 @@
                     {% if is_granted('IS_AUTHENTICATED') %}
                         <li>
                             <a href="{{ path('app_user_detail', {'userId' : app.user.id}) }}"
-                               class="block pr-4 pl-3 lg:p-0 border-b hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  hover:text-white hover:bg-gradient-to-bl hover:from-blue-500 hover:to-purple-600  text-blue-700   dark:text-blue-500"                               aria-current="Profil">Profil</a>
+                               class="block pr-4 pl-3 lg:p-0 border-b hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  hover:text-white hover:bg-gradient-to-bl hover:from-blue-500 hover:to-purple-600  text-blue-700   dark:text-blue-500"
+                               aria-current="Profil">Profil</a>
                         </li>
                         <li>
                             <a href="{{ path('app_group') }}"
-                               class="block pr-4 pl-3 lg:p-0 border-b hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  hover:text-white hover:bg-gradient-to-bl hover:from-blue-500 hover:to-purple-600  text-blue-700   dark:text-blue-500"                               aria-current="Groupes">Groupes</a>
+                               class="block pr-4 pl-3 lg:p-0 border-b hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  hover:text-white hover:bg-gradient-to-bl hover:from-blue-500 hover:to-purple-600  text-blue-700   dark:text-blue-500"
+                               aria-current="Groupes">Groupes</a>
                         </li>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li>
-                                <a href="{{ path('app_user_list') }}"
-                                   class="block pr-4 pl-3 lg:p-0 border-b hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  hover:text-white hover:bg-gradient-to-bl hover:from-blue-500 hover:to-purple-600  text-blue-700   dark:text-blue-500"                                   aria-current="Admin">Admin</a>
-                            </li>
-                        {% endif %}
+                    {% endif %}
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li>
+                            <a href="{{ path('app_user_list') }}"
+                               class="block pr-4 pl-3 lg:p-0 border-b hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  hover:text-white hover:bg-gradient-to-bl hover:from-blue-500 hover:to-purple-600  text-blue-700   dark:text-blue-500"
+                               aria-current="Admin">Admin</a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>

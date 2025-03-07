@@ -10,11 +10,10 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue'
+import { ref, watch} from 'vue'
 
 const eventItems = document.querySelectorAll('.event-item')
 const eventItemsArray = document.querySelectorAll('.event-item-array')
-
 
 const filter = ref('')
 

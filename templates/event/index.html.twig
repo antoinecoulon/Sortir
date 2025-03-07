@@ -7,14 +7,16 @@
         <h1 class="py-2 text-3xl text-center font-extrabold md:text-5xl lg:text-6x text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
             Les sorties en ligne !</h1>
 
-        <button id="toggleFilters" class="md:hidden text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+        <button id="toggleFilters" onclick="toggleFilters(event)"
+                class="md:hidden text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
             Filtres
         </button>
         <!-- Partie filtres -->
-        <div id="filters" class="max-md:hidden">
+        <div id="filters" class="hidden md:block">
             <div class="flex flex-col lg:flex-row justify-center items-center">
 
-                <form class="flex flex-col md:flex-row grow max-w-[700px]" method="get" action="{{ path("app_event") }}">
+                <form class="flex flex-col md:flex-row grow max-w-[700px]" method="get"
+                      action="{{ path("app_event") }}">
                     <div class="flex flex-col md:flex-row justify-center gap-16 grow items-center">
                         <section class="flex flex-col gap-2 ">
 
@@ -23,28 +25,39 @@
                             <div class="relative">
                                 <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2"
-                                         aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                                         aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-width="2"
+                                              d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
                                     </svg>
                                 </div>
-                                <input  type="search" id="testLabel2" name="search" value="{{ app.request.query.get('search') }}" placeholder="Rechercher par nom" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <input type="search" id="testLabel2" name="search"
+                                       value="{{ app.request.query.get('search') }}" placeholder="Rechercher par nom"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             </div>
 
                             <!-- Site avec la liste déroulante -->
                             <label for="siteList" class=" dark:text-white">Site :</label>
-                            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="site" id="siteList">
-                                <option value="" {% if app.request.query.get('site') == '' %}selected{% endif %}>Tous</option>
+                            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    name="site" id="siteList">
+                                <option value="" {% if app.request.query.get('site') == '' %}selected{% endif %}>Tous
+                                </option>
                                 {% for site in sites %}
-                                    <option value="{{site.id}}" {% if app.request.query.get('site') ==  site.id %}selected{% endif %}>{{site.name}}</option>
+                                    <option value="{{ site.id }}"
+                                            {% if app.request.query.get('site') ==  site.id %}selected{% endif %}>{{ site.name }}</option>
                                 {% endfor %}
                             </select>
 
                             <!-- Select date -->
                             <label for="date-start" class="dark:text-white">Entre :</label>
                             <div class="flex gap-2 w-full items-center">
-                                <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="date" name="dateStart" value="{{ app.request.query.get('dateStart') }}" min="2025-02-28" max="2025-12-31" id="date-start"/>
+                                <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                       type="date" name="dateStart" value="{{ app.request.query.get('dateStart') }}"
+                                       min="2025-02-28" max="2025-12-31" id="date-start"/>
                                 <label for="date-end" class="dark:text-white" id="">Et</label>
-                                <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="date" name="dateEnd" value="{{ app.request.query.get('dateEnd') }}" min="2025-02-28" max="2025-12-31" id="date-end" />
+                                <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                       type="date" name="dateEnd" value="{{ app.request.query.get('dateEnd') }}"
+                                       min="2025-02-28" max="2025-12-31" id="date-end"/>
                             </div>
                         </section>
 
@@ -54,26 +67,33 @@
                             <div class="flex items-center space-x-2 md:mt-6">
                                 <input type="checkbox" id="outingOrganizer" name="organizer"
                                        {% if app.request.query.get('organizer') is not empty %}checked{% endif %} />
-                                <label for="outingOrganizer"  class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties dont je suis l'organisateur/trice</label>
+                                <label for="outingOrganizer"
+                                       class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties dont
+                                    je suis l'organisateur/trice</label>
                             </div>
 
                             <div class="flex items-center space-x-2">
                                 <input type="checkbox" id="outingRegistered" name="registered"
                                        {% if app.request.query.get('registered') is not empty %}checked{% endif %} />
-                                <label for="outingRegistered"class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties auxquelles je suis inscrit/e</label>
+                                <label for="outingRegistered"
+                                       class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties
+                                    auxquelles je suis inscrit/e</label>
                             </div>
 
                             <div class="flex items-center space-x-2">
                                 <input type="checkbox" id="outingNotRegistered" name="notRegistered"
                                        {% if app.request.query.get('notRegistered') is not empty %}checked{% endif %} />
-                                <label for="outingNotRegistered"class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                                <label for="outingNotRegistered"
+                                       class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                                     Sorties auxquelles je ne suis pas inscrit/e</label>
                             </div>
 
                             <div class="flex items-center space-x-2">
                                 <input type="checkbox" id="outingPast" name="outingPast"
                                        {% if app.request.query.get('outingPast') is not empty %}checked{% endif %} />
-                                <label for="outingPast"class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties passées</label>
+                                <label for="outingPast"
+                                       class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Sorties
+                                    passées</label>
                             </div>
 
                             <!-- Submit -->
@@ -88,37 +108,47 @@
 
                 </form>
 
-                <div class="flex flex-col gap-2 mt-4">
-                <div class="flex flex-col lg:flex-row justify-center items-centers gap-5 max-lg:hidden">
+                <div class="hidden md:flex flex-col gap-2 mt-4">
+                    <div class="flex flex-col lg:flex-row justify-center items-centers gap-5 ">
+                        <div
+                                {{ vue_component('ToggleDisplay') }}
+                        ></div>
+
+                        <a  href="{{ path('app_event_create') }}">
+                            <button type="button"
+                                    class="text-white  bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                                Créer une sortie
+                            </button>
+                        </a>
+
+                    </div>
                     <div
-                            {{ vue_component('ToggleDisplay') }}
+                            {{ vue_component('Filter') }}
                     ></div>
-
-                    <a href="{{ path('app_event_create') }}">
-                        <button type="button"
-                                class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                            Créer une sortie
-                        </button>
-                    </a>
-
-                </div>
-                <div
-                        {{ vue_component('Filter') }}
-                ></div>
                 </div>
 
-                <a href="{{ path('app_event_create') }}" class="lg:hidden mt-3">
-                    <button type="button"
-                            class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                        Créer une sortie
-                    </button>
-                </a>
             </div>
         </div>
 
+        <div class="md:hidden flex mt-3 justify-center items-center flex-col">
+
+            <a href="{{ path('app_event_create') }}">
+                <button type="button"
+                        class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                    Créer une sortie
+                </button>
+            </a>
+
+            <div
+                    {{ vue_component('Filter') }}
+            ></div>
+        </div>
+
+
         <!-- On affiche un tableau d'events -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table id="array" hidden class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 max-lg:hidden">
+            <table id="array" hidden
+                   class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 max-lg:hidden">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
@@ -150,30 +180,30 @@
                 <tbody>
                 {% for event in events %}
 
-                        <tr
-                                data-name="{{ event.name|lower }}"
-                                data-description="{{ event.description|lower }}"
-                                data-organizer="{{ event.organizer.name|lower }}"
-                                class="event-item-array odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
-                            <td scope="row"
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{ event.name }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ event.startAt | date("d/m/Y H:i") }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ event.inscriptionLimitAt | date("d/m/Y H:i") }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ inscriptionCount[event.id] }} / {{ event.maxParticipant }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ event.displayStateLabel }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {% if isRegisteredById[event.id] %}
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
+                    <tr
+                            data-name="{{ event.name|lower }}"
+                            data-description="{{ event.description|lower }}"
+                            data-organizer="{{ event.organizer.name|lower }}"
+                            class="event-item-array odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                        <td scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ event.name }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ event.startAt | date("d/m/Y H:i") }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ event.inscriptionLimitAt | date("d/m/Y H:i") }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ inscriptionCount[event.id] }} / {{ event.maxParticipant }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ event.displayStateLabel }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if isRegisteredById[event.id] %}
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
                             <svg class="w-2.5 h-2.5 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                  fill="currentColor" viewBox="0 0 20 20">
                                 <path fill="currentColor"
@@ -182,25 +212,26 @@
                                       d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"/></svg>
                                 inscrit
                             </span>
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-4">
-                                <a href="{{ path('app_user_detail', {'userId' : event.organizer.id}) }}"
-                                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{ event.organizer ? event.organizer.name: 'Inconnu' }}</a>
-                            </td>
-                            <td class="px-6 py-4">
-                                <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
-                                {% if app.user.id is same as(event.organizer.id) %}
-                                    <a href="{{ path('app_event_update', {id: event.id}) }}">Modifier</a>
-                                {% endif %}
-                            </td>
-                        </tr>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            <a href="{{ path('app_user_detail', {'userId' : event.organizer.id}) }}"
+                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">{{ event.organizer ? event.organizer.name: 'Inconnu' }}</a>
+                        </td>
+                        <td class="px-6 py-4">
+                            <a href="{{ path('app_event_detail', {id: event.id}) }}">Afficher</a>
+                            {% if app.user.id is same as(event.organizer.id) %}
+                                <a href="{{ path('app_event_update', {id: event.id}) }}">Modifier</a>
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
 
             <!-- ...ou en version cards -->
-            <div id="card" hidden class="event-list container mx-auto flex flex-row flex-wrap flex-auto justify-center gap-6">
+            <div id="card" hidden
+                 class="event-list container mx-auto flex flex-row flex-wrap flex-auto justify-center gap-6">
                 {% for event in events %}
                     <div
                             data-name="{{ event.name|lower }}"
@@ -233,7 +264,7 @@
                                 [ {{ event.displayStateLabel }} ]
                                 {% if event.isPrivate %}
                                     [ Privé ]
-                                {%endif %}
+                                {% endif %}
 
                             </p>
                             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ event.description }}</p>
@@ -272,34 +303,15 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.getElementById('toggleFilters');
-            const filtersDiv = document.getElementById('filters');
+        function toggleFilters ()  {
+            const filterEl = document.getElementById('filters')
+            if(filterEl.classList.contains('hidden')) {
+                filterEl.classList.remove('hidden')
+            } else {
+                filterEl.classList.add('hidden')
 
-            // Masquer les filtres par défaut
-            filtersDiv.className = 'hidden';
-
-            // Ajoutez un écouteur d'événement pour le bouton
-            toggleButton.addEventListener('click', function() {
-                if (filtersDiv.className === 'hidden') {
-                    filtersDiv.className = '';
-                } else {
-                    filtersDiv.className = 'hidden';
-                }
-            });
-
-            // Ajoutez un écouteur d'événement pour le redimensionnement de la fenêtre
-            window.addEventListener('resize', function() {
-                // Si on est sur desktop (>1024px), on affiche les filtres
-                if (window.innerWidth >= 1024) {
-                    filtersDiv.className = '';
-                }
-                // Si on est sur mobile/tablette (<1024px), on masque les filtres
-                else {
-                    filtersDiv.className = 'hidden';
-                }
-            });
-        });
+            }
+        }
     </script>
 
 {% endblock %}
