@@ -23,7 +23,7 @@
 <script setup>
 import {watch, ref, onMounted} from 'vue'
 
-let display = ref('card')
+let display = ref()
 const arrayEL = document.getElementById('array')
 const cardEl = document.getElementById('card')
 const isMobile = window.innerWidth <= 1024
@@ -36,17 +36,8 @@ onMounted(() => {
     if (storageDisplay) {
       toggle(storageDisplay)
     } else {
-      toggle(display)
+      toggle('card')
     }
-  }
-})
-
-onMounted(() => {
-  let storageDisplay = localStorage.getItem('display')
-  if (storageDisplay) {
-    toggle(storageDisplay)
-  } else {
-    toggle(display)
   }
 })
 
@@ -65,8 +56,6 @@ function toggle(val) {
     localStorage.setItem('display', 'array')
   }
 }
-
-
 </script>
 
 

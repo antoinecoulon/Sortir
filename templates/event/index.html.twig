@@ -147,7 +147,7 @@
 
         <!-- On affiche un tableau d'events -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table id="array" hidden
+            <table id="array"
                    class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 max-lg:hidden">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -230,7 +230,7 @@
             </table>
 
             <!-- ...ou en version cards -->
-            <div id="card" hidden
+            <div id="card"
                  class="event-list container mx-auto flex flex-row flex-wrap flex-auto justify-center gap-6">
                 {% for event in events %}
                     <div
@@ -239,7 +239,7 @@
                             data-organizer="{{ event.organizer.name|lower }}"
                             class="event-item relative flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-xl md:flex-row md:max-w-xl hover:bg-gray-100 hover:border-blue-800 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:border-blue-400">
                         {% set imagePath = 'uploads/' ~ event.photo %}
-                        <img class="event-item md:object-cover object-contain w-full mx-2 md:h-96 border border-gray-200 rounded-lg dark:border-gray-700 md:h-auto md:w-48 md:rounded-s-lg"
+                        <img class="md:object-cover object-contain w-full mx-2 md:h-96 border border-gray-200 rounded-lg dark:border-gray-700 md:h-auto md:w-48 md:rounded-s-lg"
                              src="{{ (event.photo is not null and event.photo != '') ? asset(imagePath) : asset('images/logo.png') }}"
                              alt="Image de {{ event.name }}">
                         <div class="flex flex-col justify-between p-4 leading-normal relative">

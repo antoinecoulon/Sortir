@@ -30,7 +30,7 @@ watch(filter, () => {
         description.includes(search) ||
         organizer.includes(search)
 
-    item.style.display = isVisible ? 'block' : 'none'
+    item.style.display = isVisible ? 'flex' : 'none'
   })
 
   eventItemsArray.forEach(item => {
